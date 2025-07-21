@@ -221,7 +221,6 @@ const Login = ({handleLogin}) => {
             </div>
           </div>
           <p className="mt-8 text-xs text-center text-[#b8c1ec]">
-          </motion.div>
             DevPro Solutions Staff Management System © 2025
             <br />
             <span className="text-[#b8c1ec]">Version 2.4.1</span>
