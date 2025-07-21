@@ -219,6 +219,7 @@ const Login = ({handleLogin}) => {
                 Contact your administrator
               </a>
             </div>
+          </motion.div>
           <p className="mt-8 text-xs text-center text-[#b8c1ec]">
             DevPro Solutions Staff Management System © 2025
             <br />
