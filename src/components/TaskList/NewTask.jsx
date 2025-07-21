@@ -42,20 +42,27 @@ const NewTask = ({ data, staffId, taskIndex }) => {
         <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full">New Task</span>
       </div>
 
+      {/* --- CORRECTED BUTTONS SECTION --- */}
+      <div className="flex items-center gap-4 mt-6">
+        <button
           onClick={handleAccept}
           className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white text-sm px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-green-500/25"
-        <button className="bg-green-500 hover:bg-green-600 text-white text-sm px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95">
+        >
           <CheckCircle className="w-4 h-4" />
-          Accept Task
+          Accept
+        </button>
+
+        <button
           onClick={handleReject}
           className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white text-sm px-4 py-2.5 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 shadow-lg hover:shadow-red-500/25"
-        <button className="bg-red-500 hover:bg-red-600 text-white text-sm px-4 py-2 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95">
+        >
           <XCircle className="w-4 h-4" />
-          Reject Task
+          Reject
         </button>
       </div>
+      
     </div>
   );
-
+};
 
 export default NewTask;
