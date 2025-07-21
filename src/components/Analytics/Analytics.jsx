@@ -37,31 +37,31 @@ const Analytics = ({ onLogout, userRole }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] flex">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] flex flex-col lg:flex-row dark:from-[#181824] dark:via-[#232946] dark:to-[#181824]">
       <Sidebar userRole={userRole} onLogout={onLogout} />
       
-      <div className="flex-1 ml-64 p-8">
+      <div className="flex-1 w-full lg:ml-64 p-2 sm:p-4 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="max-w-6xl mx-auto"
+          className="max-w-6xl mx-auto w-full"
         >
-          <h1 className="text-3xl font-bold text-white mb-8">Analytics Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-6 sm:mb-8">Analytics Dashboard</h1>
 
           {/* Performance Overview */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div className="bg-[#232946] rounded-xl p-6 shadow-lg border border-[#3a3a4e]">
-              <h2 className="text-xl font-bold text-white mb-6">Team Performance</h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div className="bg-[#232946] rounded-xl p-4 sm:p-6 shadow-lg border border-[#3a3a4e] w-full">
+              <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Team Performance</h2>
               <div className="space-y-4">
                 {teamPerformance.map((member, index) => (
                   <motion.div
                     key={member.name}
-                    className="flex items-center justify-between p-4 bg-[#1a1a2e] rounded-lg"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-[#1a1a2e] rounded-lg"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.1 }}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-4 mb-2 sm:mb-0">
                       <div className="w-10 h-10 bg-gradient-to-r from-[#6246ea] to-[#3e54ac] rounded-full flex items-center justify-center text-white font-bold">
                         {member.name.charAt(0)}
                       </div>
@@ -81,8 +81,8 @@ const Analytics = ({ onLogout, userRole }) => {
               </div>
             </div>
 
-            <div className="bg-[#232946] rounded-xl p-6 shadow-lg border border-[#3a3a4e]">
-              <h2 className="text-xl font-bold text-white mb-6">Task Distribution</h2>
+            <div className="bg-[#232946] rounded-xl p-4 sm:p-6 shadow-lg border border-[#3a3a4e] w-full">
+              <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Task Distribution</h2>
               <div className="space-y-4">
                 {['frontend', 'backend', 'design', 'testing'].map((category, index) => {
                   const categoryTasks = userData?.reduce((acc, staff) => {
@@ -93,13 +93,13 @@ const Analytics = ({ onLogout, userRole }) => {
                   return (
                     <motion.div
                       key={category}
-                      className="flex items-center justify-between"
+                      className="flex flex-col sm:flex-row sm:items-center justify-between"
                       initial={{ opacity: 0, x: 20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                     >
                       <span className="text-[#b8c1ec] capitalize">{category}</span>
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-3 mt-2 sm:mt-0">
                         <div className="w-32 bg-[#1a1a2e] rounded-full h-2">
                           <motion.div
                             className="bg-gradient-to-r from-[#6246ea] to-[#3e54ac] h-2 rounded-full"
@@ -118,18 +118,18 @@ const Analytics = ({ onLogout, userRole }) => {
           </div>
 
           {/* Detailed Analytics Table */}
-          <div className="bg-[#232946] rounded-xl p-6 shadow-lg border border-[#3a3a4e]">
-            <h2 className="text-xl font-bold text-white mb-6">Detailed Performance Metrics</h2>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left">
+          <div className="bg-[#232946] rounded-xl p-2 sm:p-4 shadow-lg border border-[#3a3a4e]">
+            <h2 className="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6">Detailed Performance Metrics</h2>
+            <div className="overflow-x-auto w-full">
+              <table className="min-w-[600px] w-full text-left">
                 <thead>
                   <tr className="border-b border-[#3a3a4e]">
-                    <th className="text-[#b8c1ec] font-semibold py-3 px-4">Employee</th>
-                    <th className="text-[#b8c1ec] font-semibold py-3 px-4">Role</th>
-                    <th className="text-[#b8c1ec] font-semibold py-3 px-4">Total Tasks</th>
-                    <th className="text-[#b8c1ec] font-semibold py-3 px-4">Completed</th>
-                    <th className="text-[#b8c1ec] font-semibold py-3 px-4">Completion Rate</th>
-                    <th className="text-[#b8c1ec] font-semibold py-3 px-4">Efficiency</th>
+                    <th className="text-[#b8c1ec] font-semibold py-3 px-2 sm:px-4">Employee</th>
+                    <th className="text-[#b8c1ec] font-semibold py-3 px-2 sm:px-4">Role</th>
+                    <th className="text-[#b8c1ec] font-semibold py-3 px-2 sm:px-4">Total Tasks</th>
+                    <th className="text-[#b8c1ec] font-semibold py-3 px-2 sm:px-4">Completed</th>
+                    <th className="text-[#b8c1ec] font-semibold py-3 px-2 sm:px-4">Completion Rate</th>
+                    <th className="text-[#b8c1ec] font-semibold py-3 px-2 sm:px-4">Efficiency</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -141,7 +141,7 @@ const Analytics = ({ onLogout, userRole }) => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
                     >
-                      <td className="py-4 px-4">
+                      <td className="py-4 px-2 sm:px-4">
                         <div className="flex items-center gap-3">
                           <div className="w-8 h-8 bg-gradient-to-r from-[#6246ea] to-[#3e54ac] rounded-full flex items-center justify-center text-white text-sm font-bold">
                             {member.name.charAt(0)}
@@ -149,10 +149,10 @@ const Analytics = ({ onLogout, userRole }) => {
                           <span className="text-white font-medium">{member.name}</span>
                         </div>
                       </td>
-                      <td className="py-4 px-4 text-[#b8c1ec] capitalize">{member.role}</td>
-                      <td className="py-4 px-4 text-white">{member.totalTasks}</td>
-                      <td className="py-4 px-4 text-white">{member.completedTasks}</td>
-                      <td className="py-4 px-4">
+                      <td className="py-4 px-2 sm:px-4 text-[#b8c1ec] capitalize">{member.role}</td>
+                      <td className="py-4 px-2 sm:px-4 text-white">{member.totalTasks}</td>
+                      <td className="py-4 px-2 sm:px-4 text-white">{member.completedTasks}</td>
+                      <td className="py-4 px-2 sm:px-4">
                         <div className="flex items-center gap-2">
                           <div className="w-16 bg-[#1a1a2e] rounded-full h-2">
                             <div
@@ -163,7 +163,7 @@ const Analytics = ({ onLogout, userRole }) => {
                           <span className="text-white text-sm">{member.completionRate}%</span>
                         </div>
                       </td>
-                      <td className={`py-4 px-4 font-semibold ${getEfficiencyColor(member.efficiency)}`}>
+                      <td className={`py-4 px-2 sm:px-4 font-semibold ${getEfficiencyColor(member.efficiency)}`}>
                         {member.efficiency}
                       </td>
                     </motion.tr>

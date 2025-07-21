@@ -7,7 +7,6 @@ import AdminDashboard from './components/Dashboard/AdminDashboard'
 import TaskDetails from './components/Tasks/TaskDetails'
 import Profile from './components/Profile/Profile'
 import Analytics from './components/Analytics/Analytics'
-import Settings from './components/Settings/Settings'
 import NotFound from './components/NotFound/NotFound'
 import LoadingScreen from './components/Loading/LoadingScreen'
 import './App.css'
@@ -120,16 +119,6 @@ const App = () => {
             element={
               user === 'admin' ? (
                 <Analytics onLogout={handleLogout} userRole="admin" />
-              ) : (
-                <Navigate to="/login" />
-              )
-            } 
-          />
-          <Route 
-            path="/admin/settings" 
-            element={
-              user === 'admin' ? (
-                <Settings onLogout={handleLogout} userRole="admin" />
               ) : (
                 <Navigate to="/login" />
               )

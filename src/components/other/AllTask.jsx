@@ -124,7 +124,7 @@ const AllTask = () => {
             </div>
           </div>
         ))}
-      </h2>
+      </div>
     </div>
   );
 };

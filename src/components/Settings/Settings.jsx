@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import toast from 'react-hot-toast'
 import Sidebar from '../Navigation/Sidebar'
 
 const Settings = ({ onLogout, userRole }) => {
+  const [modal, setModal] = useState(null); // 'password' | '2fa' | 'history' | null
   const [settings, setSettings] = useState({
     notifications: true,
     emailAlerts: false,
@@ -15,7 +16,18 @@ const Settings = ({ onLogout, userRole }) => {
 
   const handleSettingChange = (key, value) => {
     setSettings(prev => ({ ...prev, [key]: value }))
-    toast.success(`${key} updated successfully!`)
+    if (key === 'darkMode') {
+      if (value) {
+        document.body.classList.add('dark')
+      } else {
+        document.body.classList.remove('dark')
+      }
+    }
+    if (key === 'language') {
+      toast.success(`Language changed to ${value}`)
+    } else {
+      toast.success(`${key} updated successfully!`)
+    }
   }
 
   const handleSaveSettings = () => {
@@ -32,14 +44,14 @@ const Settings = ({ onLogout, userRole }) => {
       language: 'en',
       timezone: 'UTC'
     })
+    document.body.classList.add('dark')
     toast.success('Settings reset to default!')
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] flex">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] flex flex-col md:flex-row">
       <Sidebar userRole={userRole} onLogout={onLogout} />
-      
-      <div className="flex-1 ml-64 p-8">
+      <div className="flex-1 md:ml-64 p-4 sm:p-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -159,15 +171,45 @@ const Settings = ({ onLogout, userRole }) => {
               <h2 className="text-xl font-bold text-white mb-6">Security</h2>
               
               <div className="space-y-4">
-                <button className="w-full bg-[#6246ea] hover:bg-[#3e54ac] text-white py-3 px-4 rounded-lg font-semibold transition-colors text-left">
-                  Change Password
-                </button>
-                <button className="w-full bg-[#1a1a2e] hover:bg-[#3a3a4e] text-white py-3 px-4 rounded-lg font-semibold transition-colors text-left border border-[#3a3a4e]">
-                  Two-Factor Authentication
-                </button>
-                <button className="w-full bg-[#1a1a2e] hover:bg-[#3a3a4e] text-white py-3 px-4 rounded-lg font-semibold transition-colors text-left border border-[#3a3a4e]">
-                  Login History
-                </button>
+                <button onClick={() => setModal('password')} className="w-full bg-[#6246ea] hover:bg-[#3e54ac] text-white py-3 px-4 rounded-lg font-semibold transition-colors text-left">Change Password</button>
+                <button onClick={() => setModal('2fa')} className="w-full bg-[#1a1a2e] hover:bg-[#3a3a4e] text-white py-3 px-4 rounded-lg font-semibold transition-colors text-left border border-[#3a3a4e]">Two-Factor Authentication</button>
+                <button onClick={() => setModal('history')} className="w-full bg-[#1a1a2e] hover:bg-[#3a3a4e] text-white py-3 px-4 rounded-lg font-semibold transition-colors text-left border border-[#3a3a4e]">Login History</button>
+      {/* Modals for security actions */}
+      {modal === 'password' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-[#232946] p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+            <button onClick={() => setModal(null)} className="absolute top-2 right-2 text-white hover:text-red-400">✕</button>
+            <h2 className="text-xl font-bold text-white mb-4">Change Password</h2>
+            <input type="password" placeholder="New Password" className="w-full mb-4 px-4 py-2 rounded-lg bg-[#1a1a2e] text-white border border-[#3a3a4e]" />
+            <input type="password" placeholder="Confirm Password" className="w-full mb-6 px-4 py-2 rounded-lg bg-[#1a1a2e] text-white border border-[#3a3a4e]" />
+            <button onClick={() => { setModal(null); toast.success('Password changed!') }} className="w-full bg-[#6246ea] hover:bg-[#3e54ac] text-white py-3 px-4 rounded-lg font-semibold transition-colors">Save</button>
+          </div>
+        </div>
+      )}
+      {modal === '2fa' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-[#232946] p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+            <button onClick={() => setModal(null)} className="absolute top-2 right-2 text-white hover:text-red-400">✕</button>
+            <h2 className="text-xl font-bold text-white mb-4">Two-Factor Authentication</h2>
+            <p className="text-[#b8c1ec] mb-6">Enable or disable 2FA for extra security.</p>
+            <button onClick={() => { setModal(null); toast.success('2FA toggled!') }} className="w-full bg-[#6246ea] hover:bg-[#3e54ac] text-white py-3 px-4 rounded-lg font-semibold transition-colors">Toggle 2FA</button>
+          </div>
+        </div>
+      )}
+      {modal === 'history' && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+          <div className="bg-[#232946] p-8 rounded-xl shadow-2xl w-full max-w-md relative">
+            <button onClick={() => setModal(null)} className="absolute top-2 right-2 text-white hover:text-red-400">✕</button>
+            <h2 className="text-xl font-bold text-white mb-4">Login History</h2>
+            <ul className="text-[#b8c1ec] space-y-2 mb-6">
+              <li>2025-07-20 10:12:34 - Success</li>
+              <li>2025-07-19 18:45:10 - Failed</li>
+              <li>2025-07-18 09:22:01 - Success</li>
+            </ul>
+            <button onClick={() => setModal(null)} className="w-full bg-[#6246ea] hover:bg-[#3e54ac] text-white py-3 px-4 rounded-lg font-semibold transition-colors">Close</button>
+          </div>
+        </div>
+      )}
               </div>
             </div>
 

@@ -42,7 +42,6 @@ const NewTask = ({ data, staffId, taskIndex }) => {
         <span className="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full">New Task</span>
       </div>
 
-      {/* --- CORRECTED BUTTONS SECTION --- */}
       <div className="flex items-center gap-4 mt-6">
         <button
           onClick={handleAccept}
@@ -60,7 +59,6 @@ const NewTask = ({ data, staffId, taskIndex }) => {
           Reject
         </button>
       </div>
-      
     </div>
   );
 };

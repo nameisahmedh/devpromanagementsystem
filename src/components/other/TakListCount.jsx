@@ -29,7 +29,7 @@ const AnimatedCount = ({ target }) => {
 
 const TaskListCount = ({data}) => {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 my-6 w-full max-w-7xl mx-auto px-2">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 my-6 w-full max-w-7xl mx-auto px-2">
       {/* New Tasks */}
       <div className="tech-card group w-full">
         <Plus className="text-blue-400 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 mb-2 animate-float" />
