@@ -56,6 +56,6 @@ const NewTask = ({ data, staffId, taskIndex }) => {
       </div>
     </div>
   );
-};
+
 
 export default NewTask;
