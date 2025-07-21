@@ -229,7 +229,6 @@ const Login = ({handleLogin}) => {
           </p>
         </motion.div>
       </motion.div>
-      </motion.div>
     </>
   );
 };
