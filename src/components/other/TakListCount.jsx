@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FaPlusCircle, FaCheckCircle, FaHourglassHalf, FaSpinner } from "react-icons/fa";
+import { Plus, CheckCircle, Clock, Activity } from 'lucide-react';
 
 const AnimatedCount = ({ target }) => {
   const [count, setCount] = useState(0);
@@ -29,45 +29,45 @@ const AnimatedCount = ({ target }) => {
 
 const TaskListCount = ({data}) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 my-6 w-full max-w-5xl mx-auto px-2">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6 my-6 w-full max-w-7xl mx-auto px-2">
       {/* New Tasks */}
       <div className="tech-card group w-full">
-        <FaPlusCircle className="text-blue-400 text-3xl md:text-4xl mb-2 animate-float" />
-        <span className="text-white text-2xl md:text-3xl font-bold">
+        <Plus className="text-blue-400 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 mb-2 animate-float" />
+        <span className="text-white text-xl sm:text-2xl lg:text-3xl font-bold">
           <AnimatedCount target={data.taskCount.newtask} />
         </span>
-        <span className="text-[#b8c1ec] text-sm md:text-base mt-1">New</span>
+        <span className="text-[#b8c1ec] text-xs sm:text-sm lg:text-base mt-1">New</span>
       </div>
       {/* Completed Tasks */}
       <div className="tech-card group w-full">
-        <FaCheckCircle className="text-green-400 text-3xl md:text-4xl mb-2 animate-bounce-slow" />
-        <span className="text-white text-2xl md:text-3xl font-bold">
+        <CheckCircle className="text-green-400 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 mb-2 animate-bounce-slow" />
+        <span className="text-white text-xl sm:text-2xl lg:text-3xl font-bold">
           <AnimatedCount target={data.taskCount.completed} />
         </span>
-        <span className="text-[#b8c1ec] text-sm md:text-base mt-1">Completed</span>
+        <span className="text-[#b8c1ec] text-xs sm:text-sm lg:text-base mt-1">Completed</span>
       </div>
       {/* Pending Tasks */}
       <div className="tech-card group w-full">
-        <FaHourglassHalf className="text-yellow-300 text-3xl md:text-4xl mb-2 animate-pulse-slow" />
-        <span className="text-white text-2xl md:text-3xl font-bold">
+        <Clock className="text-yellow-300 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 mb-2 animate-pulse-slow" />
+        <span className="text-white text-xl sm:text-2xl lg:text-3xl font-bold">
           <AnimatedCount target={data.taskCount.pending} />
         </span>
-        <span className="text-[#b8c1ec] text-sm md:text-base mt-1">Pending</span>
+        <span className="text-[#b8c1ec] text-xs sm:text-sm lg:text-base mt-1">Pending</span>
       </div>
       {/* In Progress */}
       <div className="tech-card group w-full">
-        <FaSpinner className="text-purple-400 text-3xl md:text-4xl mb-2 animate-spin-slow" />
-        <span className="text-white text-2xl md:text-3xl font-bold">
+        <Activity className="text-purple-400 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 mb-2 animate-spin-slow" />
+        <span className="text-white text-xl sm:text-2xl lg:text-3xl font-bold">
           <AnimatedCount target={data.taskCount.inProgress} />
         </span>
-        <span className="text-[#b8c1ec] text-sm md:text-base mt-1">In Progress</span>
+        <span className="text-[#b8c1ec] text-xs sm:text-sm lg:text-base mt-1">In Progress</span>
       </div>
       <style>{`
         .tech-card {
           background: linear-gradient(135deg, #232946 80%, #283e51 100%);
           border-radius: 1rem;
           box-shadow: 0 4px 32px 0 rgba(44, 62, 80, 0.15);
-          padding: 1.25rem 0.5rem;
+          padding: 1rem;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -75,10 +75,16 @@ const TaskListCount = ({data}) => {
           opacity: 0;
           transform: translateY(30px) scale(0.98);
           animation: fadeInUp 0.8s forwards;
+          border: 1px solid rgba(98, 70, 234, 0.1);
         }
-        @media (min-width: 768px) {
+        @media (min-width: 640px) {
           .tech-card {
-            padding: 2rem 1rem;
+            padding: 1.5rem;
+          }
+        }
+        @media (min-width: 1024px) {
+          .tech-card {
+            padding: 2rem;
           }
         }
         .tech-card:nth-child(1) { animation-delay: 0.05s; }

@@ -7,32 +7,40 @@ import CompleteTask from "./CompleteTask";
 import FailedTask from "./FailedTask";
 
 
-const TaskList = ({data}) => {
+const TaskList = ({ data }) => {
   return (
-    <motion.div 
-      className="w-full max-w-6xl mx-auto mt-8 px-4"
+    <motion.div
+      className="w-full max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-3xl font-extrabold text-white mb-8 text-center md:text-left">
+      <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-6 sm:mb-8 text-center lg:text-left">
         Task List
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      {data.tasks.length === 0 ? (
+        <div className="text-center py-12">
+          <div className="text-6xl mb-4">📋</div>
+          <h3 className="text-xl font-semibold text-white mb-2">No tasks assigned yet</h3>
+          <p className="text-[#b8c1ec]">Your tasks will appear here once they're assigned by your admin.</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         {data.tasks.map((ele, idx) => {
           const taskComponent = (() => {
-          if(ele.active){
-            return <AcceptTask key={idx} data={ele} />
-          }
-          if(ele.completed){
-            return <CompleteTask key={idx} data={ele} />
-          }
-          if(ele.failed){
-            return <FailedTask key={idx} data={ele} />
-          }
-          if(ele.newTask){
-            return <NewTask key={idx} data={ele} />
-          }
+            if (ele.active) {
+              return <AcceptTask key={idx} data={ele} staffId={data.id} taskIndex={idx} />
+            }
+            if (ele.completed) {
+              return <CompleteTask key={idx} data={ele} />
+            }
+            if (ele.failed) {
+              return <FailedTask key={idx} data={ele} />
+            }
+            if (ele.newTask) {
+              return <NewTask key={idx} data={ele} staffId={data.id} taskIndex={idx} />
+            }
           })();
 
           return (
@@ -40,8 +48,8 @@ const TaskList = ({data}) => {
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.1 }}
-              whileHover={{ y: -5 }}
+              transition={{ delay: idx * 0.05 }}
+              whileHover={{ y: -2 }}
             >
               <Link to={`/staff/tasks/${idx}`} className="block">
                 {taskComponent}
@@ -49,7 +57,8 @@ const TaskList = ({data}) => {
             </motion.div>
           );
         })}
-      </div>
+        </div>
+      )}
     </motion.div>
   );
 };

@@ -10,19 +10,19 @@ const AdminDashboard = ({ onLogout }) => {
   const [userData, setUserData] = useContext(AuthContext);
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] flex">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]">
       <Sidebar userRole="admin" onLogout={onLogout} />
       
-      <div className="flex-1 ml-64 transition-all duration-300">
+      <div className="lg:ml-64 transition-all duration-300">
         <motion.div
-          className="p-8"
+          className="p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">Admin Dashboard</h1>
-            <p className="text-[#b8c1ec]">Manage your team and monitor progress</p>
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white mb-2">Admin Dashboard</h1>
+            <p className="text-[#b8c1ec] text-sm sm:text-base">Manage your team and monitor progress</p>
           </div>
           
           <DashboardStats userRole="admin" />
