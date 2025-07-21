@@ -1,19 +1,35 @@
 import React, { useContext } from "react";
-import Header from "../other/Header";
+import Sidebar from "../Navigation/Sidebar";
 import AllTask from "../other/AllTask";
 import CreateTask from "../other/CreateTask";
+import DashboardStats from "../Stats/DashboardStats";
 import { AuthContext } from "../../context/AuthProvider";
+import { motion } from "framer-motion";
 
 const AdminDashboard = ({ onLogout }) => {
   const [userData, setUserData] = useContext(AuthContext);
+  
   return (
-    <div className="min-h-screen bg-[#0f172a] text-white px-4 sm:px-6 md:px-10 py-4 md:py-8 animate-fadeInSlow">
+    <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] flex">
+      <Sidebar userRole="admin" onLogout={onLogout} />
       
-
-      <Header onLogout={onLogout}/>
-
-      <CreateTask/>
-      <AllTask/>
+      <div className="flex-1 ml-64 transition-all duration-300">
+        <motion.div
+          className="p-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="mb-8">
+            <h1 className="text-4xl font-bold text-white mb-2">Admin Dashboard</h1>
+            <p className="text-[#b8c1ec]">Manage your team and monitor progress</p>
+          </div>
+          
+          <DashboardStats userRole="admin" />
+          <CreateTask />
+          <AllTask />
+        </motion.div>
+      </div>
     </div>
   );
 };

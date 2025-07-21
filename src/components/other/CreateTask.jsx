@@ -1,16 +1,14 @@
 import React, { useContext, useState } from 'react';
+import { motion } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { FaArrowLeft } from "react-icons/fa";
 import { AuthContext } from '../../context/AuthProvider';
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 
 
-
 const CreateTask = () => {
-
     const [userData,setUserData] = useContext(AuthContext);
-    
-
     const [taskTitle, setTaskTitle] = useState('');
     const [taskDescription, setTaskDescription] = useState('');
     const [assignTo, setAssignTo] = useState('');
@@ -20,6 +18,11 @@ const CreateTask = () => {
 
     const submitHandler = (e) => {
         e.preventDefault();
+
+        if (!taskTitle || !taskDescription || !assignTo || !category || !taskDate || !dueDate) {
+            toast.error('Please fill in all fields');
+            return;
+        }
 
         const task = {
             taskTitle,
@@ -33,6 +36,12 @@ const CreateTask = () => {
             completed: false
         };
 
+        const assignedUser = userData.find(user => user.name.toLowerCase() === assignTo.toLowerCase());
+        if (!assignedUser) {
+            toast.error('User not found. Please check the name.');
+            return;
+        }
+
         const data = userData;
         data.forEach(function (ele) {
             if (assignTo === ele.name) {
@@ -43,8 +52,7 @@ const CreateTask = () => {
             }
         });
         setUserData(data)
-       
-
+        toast.success(`Task assigned to ${assignTo} successfully!`);
         // Clear form
         setTaskTitle('');
         setTaskDescription('');
@@ -56,7 +64,12 @@ const CreateTask = () => {
 
     return (
         <div>
-            <main className="w-full max-w-6xl mx-auto bg-[#232946] rounded-2xl shadow-2xl p-4 sm:p-6 md:p-10 mt-4 transition-all duration-500 animate-slideUp">
+            <motion.main 
+                className="w-full max-w-6xl mx-auto bg-[#232946] rounded-2xl shadow-2xl p-4 sm:p-6 md:p-10 mt-4"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
                 <div className="flex items-center gap-4 mb-6">
                     <button
                         className="text-white hover:text-blue-400 transition duration-300 transform hover:-translate-x-1"
@@ -68,9 +81,14 @@ const CreateTask = () => {
                 </div>
 
                 <form onSubmit={submitHandler}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <motion.div 
+                        className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                    >
                         {/* Left Column */}
-                        <div className="space-y-6 animate-fadeInDelay">
+                        <div className="space-y-6">
                             <div>
                                 <label className="block text-[#cdd6f4] font-semibold mb-1">Task Title</label>
                                 <input
@@ -78,7 +96,7 @@ const CreateTask = () => {
                                     onChange={(e) => setTaskTitle(e.target.value)}
                                     type="text"
                                     placeholder="Enter task title"
-                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 />
                             </div>
 
@@ -89,7 +107,7 @@ const CreateTask = () => {
                                     onChange={(e) => setTaskDescription(e.target.value)}
                                     rows={4}
                                     placeholder="Enter task description"
-                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] resize-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] resize-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 />
                             </div>
 
@@ -100,7 +118,7 @@ const CreateTask = () => {
                                     onChange={(e) => setAssignTo(e.target.value)}
                                     type="text"
                                     placeholder="Person's name or team"
-                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 />
                             </div>
 
@@ -109,7 +127,7 @@ const CreateTask = () => {
                                 <select
                                     value={category}
                                     onChange={(e) => setCategory(e.target.value)}
-                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 >
                                     <option value="">Select Category</option>
                                     <option value="frontend">Frontend</option>
@@ -122,14 +140,14 @@ const CreateTask = () => {
                         </div>
 
                         {/* Right Column */}
-                        <div className="space-y-6 animate-fadeInDelay" style={{ animationDelay: '0.2s' }}>
+                        <div className="space-y-6">
                             <div>
                                 <label className="block text-[#cdd6f4] font-semibold mb-1">Date Assigned</label>
                                 <input
                                     type="date"
                                     value={taskDate}
                                     onChange={(e) => setTaskDate(e.target.value)}
-                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 />
                             </div>
 
@@ -139,46 +157,24 @@ const CreateTask = () => {
                                     type="date"
                                     value={dueDate}
                                     onChange={(e) => setDueDate(e.target.value)}
-                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500"
+                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
                                 />
                             </div>
 
                             <div className="pt-8">
-                                <button
+                                <motion.button
                                     type="submit"
-                                    className="bg-[#3e54ac] hover:bg-[#6246ea] transition-all duration-300 w-full px-6 py-3 rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-[#6246ea] transform hover:scale-105"
+                                    className="bg-[#3e54ac] hover:bg-[#6246ea] transition-all duration-300 w-full px-6 py-3 rounded-lg font-semibold shadow-lg focus:outline-none focus:ring-2 focus:ring-[#6246ea]"
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
                                 >
                                     Create Task
-                                </button>
+                                </motion.button>
                             </div>
                         </div>
-                    </div>
+                    </motion.div>
                 </form>
-            </main>
-            {/* <AllTask/> */}
-            <style>{`
-                .animate-fadeInSlow {
-                    animation: fadeInSlow 1s ease-out both;
-                }
-                .animate-slideUp {
-                    animation: slideUp 0.8s ease-out both;
-                }
-                .animate-fadeInDelay {
-                    animation: fadeInUp 0.7s ease-out both;
-                }
-                @keyframes fadeInSlow {
-                    from { opacity: 0; }
-                    to { opacity: 1; }
-                }
-                @keyframes slideUp {
-                    from { opacity: 0; transform: translateY(20px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                @keyframes fadeInUp {
-                    from { opacity: 0; transform: translateY(15px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-            `}</style>
+            </motion.main>
         </div>
     );
 }
