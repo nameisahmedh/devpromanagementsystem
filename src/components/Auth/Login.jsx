@@ -25,12 +25,13 @@ const Login = ({handleLogin}) => {
   };
 
   return (
-    <motion.div 
-      className="flex min-h-screen bg-gradient-to-br from-[#232946] to-[#121629]"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <>
+      <motion.div 
+        className="flex min-h-screen bg-gradient-to-br from-[#232946] to-[#121629]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+      >
       {/* Left side - Brand section */}
       <motion.div 
         className="hidden md:flex md:w-1/2 flex-col justify-center items-center p-12 bg-gradient-to-br from-[#3e54ac] to-[#6246ea]"
@@ -228,7 +229,8 @@ const Login = ({handleLogin}) => {
           </p>
         </motion.div>
       </motion.div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 };
 
