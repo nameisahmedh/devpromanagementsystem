@@ -40,17 +40,12 @@ const appReducer = (state, action) => {
                 ...task,
                 status: newStatus,
                 updatedAt: new Date().toISOString(),
-                active: newStatus === 'in-progress',
-                newTask: newStatus === 'new',
-                completed: newStatus === 'completed',
-                failed: newStatus === 'failed'
               };
             }
             return task;
           });
 
-          const taskCount = calculateTaskCount(updatedTasks);
-          return { ...staff, tasks: updatedTasks, taskCount };
+          return { ...staff, tasks: updatedTasks };
         }
         return staff;
       });

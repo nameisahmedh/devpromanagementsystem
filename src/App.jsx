@@ -45,7 +45,7 @@ const App = () => {
         setLoggedInUserData(staff)
         localStorage.setItem(
           'loggedInUser',
-          JSON.stringify({ role: 'staff', data: staff })
+          JSON.stringify({ role: 'staff', data: staff, staffId: staff.id })
         )
       } else {
         throw new Error('Invalid credentials')
@@ -54,6 +54,20 @@ const App = () => {
       throw new Error('Invalid credentials')
     }
   }
+
+  // Update logged in user data when userData changes
+  useEffect(() => {
+    if (user === 'staff' && loggedInUserData && userData) {
+      const updatedStaff = userData.find(s => s.id === loggedInUserData.id)
+      if (updatedStaff) {
+        setLoggedInUserData(updatedStaff)
+        localStorage.setItem(
+          'loggedInUser',
+          JSON.stringify({ role: 'staff', data: updatedStaff, staffId: updatedStaff.id })
+        )
+      }
+    }
+  }, [userData, user, loggedInUserData])
 
   const handleLogout = () => {
     setUser(null)

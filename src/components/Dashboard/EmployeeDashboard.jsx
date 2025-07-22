@@ -9,6 +9,7 @@ import { motion } from 'framer-motion'
 const EmployeeDashboard = ({ data, onLogout }) => {
   const { filter, searchTerm, setFilter, setSearch, getFilteredTasks } = useApp();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     if (darkMode) {
@@ -34,9 +35,9 @@ const EmployeeDashboard = ({ data, onLogout }) => {
     }`}>
       <Sidebar userRole="staff" onLogout={onLogout} />
       
-      <div className="pl-4 lg:pl-24 transition-all duration-300">
+      <div className="lg:ml-64 transition-all duration-300">
         <motion.div
-          className="p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8"
+          className="p-4 sm:p-6 lg:p-8 pt-20 lg:pt-16"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

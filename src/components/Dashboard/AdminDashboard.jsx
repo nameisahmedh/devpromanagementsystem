@@ -31,9 +31,9 @@ const AdminDashboard = ({ onLogout }) => {
         : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
     }`}>
       <Sidebar userRole="admin" onLogout={onLogout} />
-      <main className="flex-1 w-full pl-4 lg:pl-24 transition-all duration-300">
+      <main className="flex-1 w-full lg:ml-64 transition-all duration-300">
         <motion.div
-          className="max-w-full mx-auto p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 transition-colors duration-300"
+          className="max-w-full mx-auto p-4 sm:p-6 lg:p-8 pt-20 lg:pt-16 transition-colors duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}

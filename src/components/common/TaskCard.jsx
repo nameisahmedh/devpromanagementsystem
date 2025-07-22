@@ -163,7 +163,11 @@ const TaskCard = ({
             return (
               <button
                 key={index}
-                onClick={() => onStatusChange(task.id, action.status)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onStatusChange(task.id, action.status);
+                }}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-semibold transition-all duration-300 transform hover:scale-105 active:scale-95 ${action.color} text-white shadow-lg flex-1 justify-center`}
               >
                 <ActionIcon className="w-4 h-4" />

@@ -13,14 +13,16 @@ import {
 
 const Sidebar = ({ userRole, onLogout }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(true)
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const location = useLocation()
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        setIsCollapsed(true)
+        setIsCollapsed(false)
         setIsMobileOpen(false)
+      } else {
+        setIsCollapsed(true)
       }
     }
     window.addEventListener('resize', handleResize)
@@ -45,6 +47,7 @@ const Sidebar = ({ userRole, onLogout }) => {
   const menuItems = userRole === 'admin' ? adminMenuItems : staffMenuItems
 
   const toggleMobile = () => setIsMobileOpen(!isMobileOpen)
+  const toggleCollapse = () => setIsCollapsed(!isCollapsed)
   const closeMobile = () => setIsMobileOpen(false)
 
   return (
@@ -55,6 +58,15 @@ const Sidebar = ({ userRole, onLogout }) => {
         className="lg:hidden fixed top-4 left-4 z-50 bg-[#232946] text-white p-2 rounded-lg shadow-lg"
       >
         {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+      </button>
+
+      {/* Desktop Collapse Button */}
+      <button
+        onClick={toggleCollapse}
+        className="hidden lg:block fixed top-4 left-4 z-50 bg-[#232946] text-white p-2 rounded-lg shadow-lg transition-all duration-300"
+        style={{ left: isCollapsed ? '4px' : '260px' }}
+      >
+        {isCollapsed ? <Menu className="w-6 h-6" /> : <X className="w-6 h-6" />}
       </button>
 
       {/* Mobile Overlay */}
@@ -69,8 +81,9 @@ const Sidebar = ({ userRole, onLogout }) => {
       <motion.div
         className={`
           bg-gradient-to-b from-[#232946] to-[#1a1a2e] h-screen fixed left-0 top-0 z-40 transition-all duration-300 border-r border-[#3a3a4e]
-          ${isCollapsed ? 'w-20' : 'w-64'}
-          ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          ${isCollapsed && window.innerWidth >= 1024 ? 'w-20' : 'w-64'}
+          ${isMobileOpen ? 'translate-x-0' : window.innerWidth >= 1024 ? 'translate-x-0' : '-translate-x-full'}
+          ${isCollapsed && window.innerWidth >= 1024 ? '-translate-x-44' : ''}
           flex flex-col
         `}
         initial={{ x: -100 }}
@@ -84,7 +97,7 @@ const Sidebar = ({ userRole, onLogout }) => {
               <div className="w-10 h-10 bg-gradient-to-r from-[#6246ea] to-[#3e54ac] rounded-lg flex items-center justify-center">
                 <Code className="w-6 h-6 text-white" />
               </div>
-              {(!isCollapsed || isMobileOpen) && (
+              {((!isCollapsed && window.innerWidth >= 1024) || isMobileOpen || window.innerWidth < 1024) && (
                 <h2 className="text-white font-bold text-xl">DevPro</h2>
               )}
             </div>
@@ -115,7 +128,7 @@ const Sidebar = ({ userRole, onLogout }) => {
                   `}
                 >
                   <IconComponent className={`w-6 h-6 ${isActive ? 'text-white' : 'group-hover:text-[#6246ea]'}`} />
-                  {(!isCollapsed || isMobileOpen) && (
+                  {((!isCollapsed && window.innerWidth >= 1024) || isMobileOpen || window.innerWidth < 1024) && (
                     <span className="font-medium">{item.label}</span>
                   )}
                 </Link>
@@ -124,7 +137,7 @@ const Sidebar = ({ userRole, onLogout }) => {
           </nav>
 
           {/* User Role Badge */}
-          {(!isCollapsed || isMobileOpen) && (
+          {((!isCollapsed && window.innerWidth >= 1024) || isMobileOpen || window.innerWidth < 1024) && (
             <div className="mb-4 p-3 bg-[#3a3a4e] rounded-xl">
               <div className="text-xs text-[#b8c1ec] mb-1">Logged in as</div>
               <div className="text-white font-semibold capitalize">{userRole}</div>
@@ -140,7 +153,7 @@ const Sidebar = ({ userRole, onLogout }) => {
             className="flex items-center gap-4 p-3 w-full text-[#b8c1ec] hover:bg-red-600/20 hover:text-red-400 rounded-xl transition-all duration-200 group"
           >
             <LogOut className="w-6 h-6 group-hover:text-red-400" />
-            {(!isCollapsed || isMobileOpen) && (
+            {((!isCollapsed && window.innerWidth >= 1024) || isMobileOpen || window.innerWidth < 1024) && (
               <span className="font-medium">Logout</span>
             )}
           </button>
