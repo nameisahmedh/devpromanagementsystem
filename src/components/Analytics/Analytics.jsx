@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import { motion } from 'framer-motion'
 import Sidebar from '../Navigation/Sidebar'
-import { AuthContext } from '../../context/AuthProvider'
+import { useApp } from '../../context/AppContext'
 
 const Analytics = ({ onLogout, userRole }) => {
-  const [userData] = useContext(AuthContext)
+  const { userData } = useApp()
 
   const getTeamPerformance = () => {
     if (!userData) return []
