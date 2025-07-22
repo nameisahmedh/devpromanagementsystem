@@ -6,8 +6,7 @@ import {
   BarChart3, 
   User, 
   LogOut, 
-  Menu, 
-  X,
+  Menu,
   Code
 } from 'lucide-react'
 
@@ -19,10 +18,7 @@ const Sidebar = ({ userRole, onLogout }) => {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
-        setIsCollapsed(false)
         setIsMobileOpen(false)
-      } else {
-        setIsCollapsed(true)
       }
     }
     window.addEventListener('resize', handleResize)
@@ -48,7 +44,6 @@ const Sidebar = ({ userRole, onLogout }) => {
 
   const toggleMobile = () => setIsMobileOpen(!isMobileOpen)
   const toggleCollapse = () => setIsCollapsed(!isCollapsed)
-  const closeMobile = () => setIsMobileOpen(false)
 
   return (
     <>
@@ -57,23 +52,23 @@ const Sidebar = ({ userRole, onLogout }) => {
         onClick={toggleMobile}
         className="lg:hidden fixed top-4 left-4 z-50 bg-[#232946] text-white p-2 rounded-lg shadow-lg"
       >
-        {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        <Menu className="w-6 h-6" />
       </button>
 
       {/* Desktop Collapse Button */}
       <button
         onClick={toggleCollapse}
-        className="hidden lg:block fixed top-4 left-4 z-50 bg-[#232946] text-white p-2 rounded-lg shadow-lg transition-all duration-300"
+        className="hidden lg:block fixed top-4 z-50 bg-[#232946] text-white p-2 rounded-lg shadow-lg transition-all duration-300"
         style={{ left: isCollapsed ? '4px' : '260px' }}
       >
-        {isCollapsed ? <Menu className="w-6 h-6" /> : <X className="w-6 h-6" />}
+        <Menu className="w-6 h-6" />
       </button>
 
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-          onClick={closeMobile}
+          onClick={() => setIsMobileOpen(false)}
         />
       )}
 
@@ -92,7 +87,7 @@ const Sidebar = ({ userRole, onLogout }) => {
       >
         <div className="p-4 h-full flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center justify-center mb-8">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-gradient-to-r from-[#6246ea] to-[#3e54ac] rounded-lg flex items-center justify-center">
                 <Code className="w-6 h-6 text-white" />
@@ -101,12 +96,6 @@ const Sidebar = ({ userRole, onLogout }) => {
                 <h2 className="text-white font-bold text-xl">DevPro</h2>
               )}
             </div>
-            <button
-              onClick={closeMobile}
-              className="lg:hidden text-white hover:text-red-400 transition-colors p-1 rounded"
-            >
-              <X className="w-6 h-6" />
-            </button>
           </div>
 
           {/* Navigation */}
@@ -119,7 +108,7 @@ const Sidebar = ({ userRole, onLogout }) => {
                 <Link
                   key={item.path}
                   to={item.path}
-                  onClick={closeMobile}
+                  onClick={() => setIsMobileOpen(false)}
                   className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 group
                     ${isActive
                       ? 'bg-gradient-to-r from-[#6246ea] to-[#3e54ac] text-white shadow-lg'
@@ -148,7 +137,7 @@ const Sidebar = ({ userRole, onLogout }) => {
           <button
             onClick={() => {
               onLogout();
-              closeMobile();
+              setIsMobileOpen(false);
             }}
             className="flex items-center gap-4 p-3 w-full text-[#b8c1ec] hover:bg-red-600/20 hover:text-red-400 rounded-xl transition-all duration-200 group"
           >

@@ -126,10 +126,10 @@ const appReducer = (state, action) => {
 // Helper function to calculate task counts
 const calculateTaskCount = (tasks) => {
   return {
-    newtask: tasks.filter(task => task.status === 'new').length,
+    new: tasks.filter(task => task.status === 'new').length,
     inProgress: tasks.filter(task => task.status === 'in-progress').length,
     completed: tasks.filter(task => task.status === 'completed').length,
-    pending: tasks.filter(task => task.status === 'failed').length,
+    failed: tasks.filter(task => task.status === 'failed').length,
     total: tasks.length
   };
 };

@@ -5,7 +5,6 @@ const staff = [
     email: "alice@mail.com",
     password: "12345",
     role: "frontend",
-    taskCount: { inProgress: 2, completed: 1, pending: 0, newtask: 1 },
     tasks: [
       {
         id: 1001,
@@ -51,7 +50,6 @@ const staff = [
     email: "bob@mail.com",
     password: "12345",
     role: "backend",
-    taskCount: { inProgress: 1, completed: 2, pending: 0, newtask: 1 },
     tasks: [
       {
         id: 2001,
@@ -97,7 +95,6 @@ const staff = [
     email: "carol@mail.com",
     password: "12345",
     role: "design",
-    taskCount: { inProgress: 1, completed: 1, pending: 1, newtask: 1 },
     tasks: [
       {
         id: 3001,
@@ -143,7 +140,6 @@ const staff = [
     email: "david@mail.com",
     password: "12345",
     role: "testing",
-    taskCount: { inProgress: 1, completed: 2, pending: 0, newtask: 1 },
     tasks: [
       {
         id: 4001,
@@ -189,7 +185,6 @@ const staff = [
     email: "eva@mail.com",
     password: "12345",
     role: "frontend",
-    taskCount: { inProgress: 1, completed: 1, pending: 1, newtask: 1 },
     tasks: [
       {
         id: 5001,

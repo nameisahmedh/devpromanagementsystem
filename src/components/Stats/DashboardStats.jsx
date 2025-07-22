@@ -6,29 +6,62 @@ const DashboardStats = ({ userRole }) => {
   const { userData } = useApp()
 
   const calculateStats = () => {
-    if (!userData) return { totalStaff: 0, totalTasks: 0, completedTasks: 0, pendingTasks: 0 }
+    if (!userData) return { 
+      totalStaff: 0, 
+      totalTasks: 0, 
+      completedTasks: 0, 
+      inProgressTasks: 0, 
+      failedTasks: 0, 
+      newTasks: 0,
+      overdueTasks: 0 
+    }
 
     const totalStaff = userData.length
     let totalTasks = 0
     let completedTasks = 0
-    let pendingTasks = 0
     let inProgressTasks = 0
+    let failedTasks = 0
+    let newTasks = 0
     let overdueTasks = 0
 
     const today = new Date().toISOString().split('T')[0]
+    
     userData.forEach(staff => {
       if (staff.tasks) {
         totalTasks += staff.tasks.length
-        completedTasks += staff.tasks.filter(task => task.status === 'completed').length
-        pendingTasks += staff.tasks.filter(task => task.status === 'failed').length
-        inProgressTasks += staff.tasks.filter(task => task.status === 'in-progress').length
-        overdueTasks += staff.tasks.filter(task => 
-          task.dueDate < today && task.status !== 'completed' && task.status !== 'failed'
-        ).length
+        staff.tasks.forEach(task => {
+          switch(task.status) {
+            case 'completed':
+              completedTasks++
+              break
+            case 'in-progress':
+              inProgressTasks++
+              break
+            case 'failed':
+              failedTasks++
+              break
+            case 'new':
+              newTasks++
+              break
+          }
+          
+          // Check for overdue tasks
+          if (task.dueDate < today && task.status !== 'completed' && task.status !== 'failed') {
+            overdueTasks++
+          }
+        })
       }
     })
 
-    return { totalStaff, totalTasks, completedTasks, pendingTasks, inProgressTasks, overdueTasks }
+    return { 
+      totalStaff, 
+      totalTasks, 
+      completedTasks, 
+      inProgressTasks, 
+      failedTasks, 
+      newTasks,
+      overdueTasks 
+    }
   }
 
   const stats = calculateStats()
@@ -40,14 +73,14 @@ const DashboardStats = ({ userRole }) => {
       value: stats.totalStaff,
       icon: '👥',
       color: 'from-blue-500 to-blue-600',
-      change: '+2 this month'
+      change: `${stats.totalStaff} team members`
     },
     {
       title: 'Total Tasks',
       value: stats.totalTasks,
       icon: '📋',
       color: 'from-purple-500 to-purple-600',
-      change: '+12 this week'
+      change: `All assigned tasks`
     },
     {
       title: 'Completed',
@@ -65,7 +98,7 @@ const DashboardStats = ({ userRole }) => {
     },
     {
       title: 'Failed',
-      value: stats.pendingTasks,
+      value: stats.failedTasks,
       icon: '❌',
       color: 'from-red-500 to-red-600',
       change: 'Need review'

@@ -29,12 +29,12 @@ const AnimatedCount = ({ target }) => {
 };
 
 const TaskListCount = ({ data, darkMode = true }) => {
-  // Calculate task counts properly
+  // Calculate task counts from actual task data
   const taskCounts = {
     newtask: data?.tasks?.filter(task => task.status === 'new').length || 0,
     inProgress: data?.tasks?.filter(task => task.status === 'in-progress').length || 0,
     completed: data?.tasks?.filter(task => task.status === 'completed').length || 0,
-    pending: data?.tasks?.filter(task => task.status === 'failed').length || 0,
+    failed: data?.tasks?.filter(task => task.status === 'failed').length || 0,
   };
 
   const cardClass = `
@@ -82,7 +82,7 @@ const TaskListCount = ({ data, darkMode = true }) => {
       <div className={cardClass}>
         <Clock className="text-red-500 w-8 h-8 mb-3" />
         <span className={`text-2xl font-bold ${textClass} mb-1`}>
-          <AnimatedCount target={taskCounts.pending} />
+          <AnimatedCount target={taskCounts.failed} />
         </span>
         <span className={`text-sm ${subtextClass}`}>Failed</span>
       </div>

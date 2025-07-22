@@ -16,9 +16,16 @@ const Profile = ({ data, onLogout }) => {
     // Here you would typically save to backend/context
   }
 
-  const completedTasks = data?.tasks?.filter(task => task.completed).length || 0
-  const totalTasks = data?.tasks?.length || 0
-  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+  // Calculate actual task statistics from data
+  const taskStats = {
+    total: data?.tasks?.length || 0,
+    completed: data?.tasks?.filter(task => task.status === 'completed').length || 0,
+    inProgress: data?.tasks?.filter(task => task.status === 'in-progress').length || 0,
+    failed: data?.tasks?.filter(task => task.status === 'failed').length || 0,
+    new: data?.tasks?.filter(task => task.status === 'new').length || 0
+  }
+
+  const completionRate = taskStats.total > 0 ? Math.round((taskStats.completed / taskStats.total) * 100) : 0
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] flex">
@@ -50,13 +57,17 @@ const Profile = ({ data, onLogout }) => {
                     <div className="text-sm text-[#b8c1ec]">Task Completion Rate</div>
                   </div>
                   
-                  <div className="w-full bg-[#1a1a2e] rounded-full h-2">
+                  <div className="w-full bg-[#1a1a2e] rounded-full h-3">
                     <motion.div
-                      className="bg-gradient-to-r from-[#6246ea] to-[#3e54ac] h-2 rounded-full"
+                      className="bg-gradient-to-r from-[#6246ea] to-[#3e54ac] h-3 rounded-full"
                       initial={{ width: 0 }}
                       animate={{ width: `${completionRate}%` }}
                       transition={{ duration: 1, delay: 0.5 }}
                     />
+                  </div>
+                  
+                  <div className="text-center text-sm text-[#b8c1ec]">
+                    {taskStats.completed} of {taskStats.total} tasks completed
                   </div>
                 </div>
               </div>
@@ -132,22 +143,26 @@ const Profile = ({ data, onLogout }) => {
               {/* Task Statistics */}
               <div className="bg-[#232946] rounded-xl p-6 shadow-lg border border-[#3a3a4e] mt-6">
                 <h3 className="text-xl font-bold text-white mb-6">Task Statistics</h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-400">{data?.taskCount?.newtask || 0}</div>
+                    <div className="text-2xl font-bold text-blue-400">{taskStats.new}</div>
                     <div className="text-sm text-[#b8c1ec]">New</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-yellow-400">{data?.taskCount?.inProgress || 0}</div>
+                    <div className="text-2xl font-bold text-yellow-400">{taskStats.inProgress}</div>
                     <div className="text-sm text-[#b8c1ec]">In Progress</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-green-400">{data?.taskCount?.completed || 0}</div>
+                    <div className="text-2xl font-bold text-green-400">{taskStats.completed}</div>
                     <div className="text-sm text-[#b8c1ec]">Completed</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-2xl font-bold text-red-400">{data?.taskCount?.pending || 0}</div>
-                    <div className="text-sm text-[#b8c1ec]">Pending</div>
+                    <div className="text-2xl font-bold text-red-400">{taskStats.failed}</div>
+                    <div className="text-sm text-[#b8c1ec]">Failed</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-400">{taskStats.total}</div>
+                    <div className="text-sm text-[#b8c1ec]">Total</div>
                   </div>
                 </div>
               </div>
