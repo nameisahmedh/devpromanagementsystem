@@ -13,14 +13,15 @@ import {
 
 const Sidebar = ({ userRole, onLogout }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(window.innerWidth >= 1024)
-  const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark')
+  const [isCollapsed, setIsCollapsed] = useState(true)
   const location = useLocation()
 
-  // Responsive: collapsed on large screens, expanded on mobile/tablet
   useEffect(() => {
     const handleResize = () => {
-      setIsCollapsed(window.innerWidth >= 1024)
+      if (window.innerWidth >= 1024) {
+        setIsCollapsed(true)
+        setIsMobileOpen(false)
+      }
     }
     window.addEventListener('resize', handleResize)
     handleResize()
@@ -29,28 +30,7 @@ const Sidebar = ({ userRole, onLogout }) => {
 
   useEffect(() => {
     setIsMobileOpen(false)
-    // eslint-disable-next-line
   }, [location.pathname])
-
-  // Sync dark mode across app
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  }, [darkMode])
-
-  // Listen for theme changes in other tabs/windows
-  useEffect(() => {
-    const syncTheme = () => {
-      setDarkMode(localStorage.getItem('theme') === 'dark')
-    }
-    window.addEventListener('storage', syncTheme)
-    return () => window.removeEventListener('storage', syncTheme)
-  }, [])
 
   const adminMenuItems = [
     { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -72,25 +52,23 @@ const Sidebar = ({ userRole, onLogout }) => {
       {/* Mobile Menu Button */}
       <button
         onClick={toggleMobile}
-        aria-label={isMobileOpen ? 'Close sidebar' : 'Open sidebar'}
-        className="lg:hidden fixed top-4 left-4 z-[101] bg-[#232946] text-white p-2 rounded-lg shadow-lg focus:outline-none focus:ring-2 focus:ring-[#6246ea]"
+        className="lg:hidden fixed top-4 left-4 z-50 bg-[#232946] text-white p-2 rounded-lg shadow-lg"
       >
-        {isMobileOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+        {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
       </button>
 
       {/* Mobile Overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-[100] lg:hidden"
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
           onClick={closeMobile}
-          aria-label="Sidebar overlay"
         />
       )}
 
       {/* Sidebar */}
       <motion.div
         className={`
-          bg-gradient-to-b from-[#232946] to-[#1a1a2e] h-screen fixed left-0 top-0 z-[102] transition-all duration-300 border-r border-[#3a3a4e]
+          bg-gradient-to-b from-[#232946] to-[#1a1a2e] h-screen fixed left-0 top-0 z-40 transition-all duration-300 border-r border-[#3a3a4e]
           ${isCollapsed ? 'w-20' : 'w-64'}
           ${isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           flex flex-col
@@ -98,30 +76,26 @@ const Sidebar = ({ userRole, onLogout }) => {
         initial={{ x: -100 }}
         animate={{ x: 0 }}
         transition={{ duration: 0.3 }}
-        tabIndex={-1}
-        aria-label="Sidebar navigation"
-        style={{ outline: isMobileOpen ? '2px solid #6246ea' : 'none' }}
       >
         <div className="p-4 h-full flex flex-col">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 bg-gradient-to-r from-[#6246ea] to-[#3e54ac] rounded-lg flex items-center justify-center">
-                <Code className="w-7 h-7 text-white" />
+                <Code className="w-6 h-6 text-white" />
               </div>
-              {!isCollapsed && (
+              {(!isCollapsed || isMobileOpen) && (
                 <h2 className="text-white font-bold text-xl">DevPro</h2>
               )}
             </div>
-            {/* Close button for mobile sidebar */}
             <button
               onClick={closeMobile}
               className="lg:hidden text-white hover:text-red-400 transition-colors p-1 rounded"
-              aria-label="Close sidebar"
             >
-              <X className="w-7 h-7" />
+              <X className="w-6 h-6" />
             </button>
           </div>
+
           {/* Navigation */}
           <nav className="space-y-2 flex-1">
             {menuItems.map((item) => {
@@ -140,22 +114,23 @@ const Sidebar = ({ userRole, onLogout }) => {
                     }
                   `}
                 >
-                  <IconComponent className={`w-7 h-7 ${isActive ? 'text-white' : 'group-hover:text-[#6246ea]'}`} />
-                  {/* Only show label on mobile/tablet */}
-                  {!isCollapsed && (
+                  <IconComponent className={`w-6 h-6 ${isActive ? 'text-white' : 'group-hover:text-[#6246ea]'}`} />
+                  {(!isCollapsed || isMobileOpen) && (
                     <span className="font-medium">{item.label}</span>
                   )}
                 </Link>
               )
             })}
           </nav>
+
           {/* User Role Badge */}
-          {!isCollapsed && (
+          {(!isCollapsed || isMobileOpen) && (
             <div className="mb-4 p-3 bg-[#3a3a4e] rounded-xl">
               <div className="text-xs text-[#b8c1ec] mb-1">Logged in as</div>
               <div className="text-white font-semibold capitalize">{userRole}</div>
             </div>
           )}
+
           {/* Logout Button */}
           <button
             onClick={() => {
@@ -164,8 +139,8 @@ const Sidebar = ({ userRole, onLogout }) => {
             }}
             className="flex items-center gap-4 p-3 w-full text-[#b8c1ec] hover:bg-red-600/20 hover:text-red-400 rounded-xl transition-all duration-200 group"
           >
-            <LogOut className="w-7 h-7 group-hover:text-red-400" />
-            {!isCollapsed && (
+            <LogOut className="w-6 h-6 group-hover:text-red-400" />
+            {(!isCollapsed || isMobileOpen) && (
               <span className="font-medium">Logout</span>
             )}
           </button>

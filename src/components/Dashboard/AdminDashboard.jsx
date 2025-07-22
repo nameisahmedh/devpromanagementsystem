@@ -15,44 +15,54 @@ const AdminDashboard = ({ onLogout }) => {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
       localStorage.setItem('theme', 'dark');
     } else {
       document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
 
   return (
-    <div className={
-      `min-h-screen flex flex-col lg:flex-row transition-colors duration-300
-      dark:bg-gradient-to-br dark:from-[#181824] dark:via-[#232946] dark:to-[#181824]
-      bg-gradient-to-br from-[#f3f4f6] via-[#e5e7eb] to-[#f3f4f6]`
-    }>
+    <div className={`min-h-screen flex flex-col lg:flex-row transition-colors duration-300 ${
+      darkMode 
+        ? 'bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a]' 
+        : 'bg-gradient-to-br from-gray-50 via-white to-gray-100'
+    }`}>
       <Sidebar userRole="admin" onLogout={onLogout} />
-      <main className="flex-1 w-full lg:ml-20 transition-all duration-300">
+      <main className="flex-1 w-full pl-4 lg:pl-24 transition-all duration-300">
         <motion.div
-          className="max-w-full mx-auto p-4 sm:p-6 lg:p-8 pt-16 lg:pt-8 transition-colors duration-300"
+          className="max-w-full mx-auto p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 transition-colors duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 sm:mb-8 gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 dark:text-white text-gray-900">
+              <h1 className={`text-2xl sm:text-3xl lg:text-4xl font-bold mb-2 ${
+                darkMode ? 'text-white' : 'text-gray-900'
+              }`}>
                 Admin Dashboard
               </h1>
-              <p className="text-sm sm:text-base dark:text-[#b8c1ec] text-gray-600">
+              <p className={`text-sm sm:text-base ${
+                darkMode ? 'text-[#b8c1ec]' : 'text-gray-600'
+              }`}>
                 Manage your team and monitor progress
               </p>
             </div>
             <div className="flex items-center gap-4">
-              <div className="flex bg-[#232946] rounded-lg p-1">
+              <div className={`flex rounded-lg p-1 ${
+                darkMode ? 'bg-[#232946]' : 'bg-gray-200'
+              }`}>
                 <button
                   onClick={() => setActiveTab('overview')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     activeTab === 'overview'
                       ? 'bg-[#6246ea] text-white'
-                      : 'text-[#b8c1ec] hover:text-white'
+                      : darkMode 
+                        ? 'text-[#b8c1ec] hover:text-white'
+                        : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   Overview
@@ -62,7 +72,9 @@ const AdminDashboard = ({ onLogout }) => {
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
                     activeTab === 'tasks'
                       ? 'bg-[#6246ea] text-white'
-                      : 'text-[#b8c1ec] hover:text-white'
+                      : darkMode 
+                        ? 'text-[#b8c1ec] hover:text-white'
+                        : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   Task Management
@@ -70,11 +82,11 @@ const AdminDashboard = ({ onLogout }) => {
               </div>
               <button
                 onClick={() => setDarkMode((prev) => !prev)}
-                className={`px-4 py-2 rounded-lg shadow transition-colors
-                  ${darkMode
-                    ? 'bg-[#3a3a4e] text-white hover:bg-[#232946]'
-                    : 'bg-white text-gray-900 border border-gray-200 hover:bg-gray-100'}
-                `}
+                className={`px-4 py-2 rounded-lg shadow transition-colors ${
+                  darkMode
+                    ? 'bg-[#232946] text-white hover:bg-[#6246ea]'
+                    : 'bg-white text-gray-900 border border-gray-200 hover:bg-gray-100'
+                }`}
               >
                 {darkMode ? "🌙 Dark" : "☀️ Light"}
               </button>
@@ -82,16 +94,16 @@ const AdminDashboard = ({ onLogout }) => {
           </div>
           
           <div className="w-full">
-            <DashboardStats userRole="admin" />
+            <DashboardStats userRole="admin" darkMode={darkMode} />
           </div>
           
           {activeTab === 'overview' && (
             <div className="flex flex-col lg:flex-row gap-8 w-full">
               <div className="w-full lg:w-1/2">
-                <CreateTask />
+                <CreateTask darkMode={darkMode} />
               </div>
               <div className="w-full lg:w-1/2">
-                <AllTask />
+                <AllTask darkMode={darkMode} />
               </div>
             </div>
           )}
@@ -103,8 +115,9 @@ const AdminDashboard = ({ onLogout }) => {
                 onSearchChange={setSearch}
                 filter={filter}
                 onFilterChange={setFilter}
+                darkMode={darkMode}
               />
-              <AllTask showDetailed={true} />
+              <AllTask showDetailed={true} darkMode={darkMode} />
             </div>
           )}
         </motion.div>

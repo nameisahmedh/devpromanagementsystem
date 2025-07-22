@@ -8,12 +8,15 @@ const TaskCard = ({
   showActions = true, 
   showAssignee = false,
   assigneeName = '',
-  onDelete = null 
+  onDelete = null,
+  darkMode = true 
 }) => {
   const getStatusConfig = (status) => {
     const configs = {
       'new': {
-        color: 'border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-blue-600/5',
+        color: darkMode 
+          ? 'border-blue-500/30 bg-gradient-to-br from-blue-500/10 to-blue-600/5'
+          : 'border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100',
         badge: 'bg-blue-500 text-white',
         icon: AlertTriangle,
         actions: [
@@ -21,7 +24,9 @@ const TaskCard = ({
         ]
       },
       'in-progress': {
-        color: 'border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5',
+        color: darkMode 
+          ? 'border-yellow-500/30 bg-gradient-to-br from-yellow-500/10 to-yellow-600/5'
+          : 'border-yellow-300 bg-gradient-to-br from-yellow-50 to-yellow-100',
         badge: 'bg-yellow-500 text-white',
         icon: Play,
         actions: [
@@ -30,13 +35,17 @@ const TaskCard = ({
         ]
       },
       'completed': {
-        color: 'border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-600/5',
+        color: darkMode 
+          ? 'border-green-500/30 bg-gradient-to-br from-green-500/10 to-green-600/5'
+          : 'border-green-300 bg-gradient-to-br from-green-50 to-green-100',
         badge: 'bg-green-500 text-white',
         icon: CheckCircle,
         actions: []
       },
       'failed': {
-        color: 'border-red-500/30 bg-gradient-to-br from-red-500/10 to-red-600/5',
+        color: darkMode 
+          ? 'border-red-500/30 bg-gradient-to-br from-red-500/10 to-red-600/5'
+          : 'border-red-300 bg-gradient-to-br from-red-50 to-red-100',
         badge: 'bg-red-500 text-white',
         icon: XCircle,
         actions: [
@@ -68,6 +77,11 @@ const TaskCard = ({
     return colors[priority] || 'text-gray-400';
   };
 
+  const titleClass = darkMode ? 'text-white' : 'text-gray-900';
+  const descriptionClass = darkMode ? 'text-[#b8c1ec]' : 'text-gray-600';
+  const dateClass = darkMode ? 'text-[#b8c1ec]' : 'text-gray-500';
+  const categoryClass = darkMode ? 'bg-[#3a3a4e] text-[#b8c1ec]' : 'bg-gray-200 text-gray-700';
+
   return (
     <motion.div
       className={`rounded-xl p-4 sm:p-6 shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl ${config.color} ${
@@ -84,7 +98,7 @@ const TaskCard = ({
             <StatusIcon className="w-3 h-3" />
             {task.status.replace('-', ' ').toUpperCase()}
           </span>
-          <span className="px-2 py-1 bg-[#3a3a4e] text-[#b8c1ec] rounded-full text-xs font-medium capitalize">
+          <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${categoryClass}`}>
             {task.category}
           </span>
           {task.priority && (
@@ -111,24 +125,24 @@ const TaskCard = ({
       </div>
 
       {/* Task Content */}
-      <h3 className="text-white font-bold text-lg mb-2 line-clamp-2">
+      <h3 className={`font-bold text-lg mb-2 line-clamp-2 ${titleClass}`}>
         {task.taskTitle}
       </h3>
       
-      <p className="text-[#b8c1ec] text-sm mb-4 line-clamp-3">
+      <p className={`text-sm mb-4 line-clamp-3 ${descriptionClass}`}>
         {task.taskDescription}
       </p>
 
       {/* Assignee */}
       {showAssignee && assigneeName && (
         <div className="flex items-center gap-2 mb-3">
-          <User className="w-4 h-4 text-[#b8c1ec]" />
-          <span className="text-[#b8c1ec] text-sm">Assigned to: {assigneeName}</span>
+          <User className={`w-4 h-4 ${dateClass}`} />
+          <span className={`text-sm ${dateClass}`}>Assigned to: {assigneeName}</span>
         </div>
       )}
 
       {/* Dates */}
-      <div className="flex items-center justify-between text-xs text-[#b8c1ec] mb-4">
+      <div className={`flex items-center justify-between text-xs mb-4 ${dateClass}`}>
         <div className="flex items-center gap-1">
           <Calendar className="w-3 h-3" />
           <span>Created: {formatDate(task.taskDate)}</span>
