@@ -1,13 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import AcceptTask from "./AcceptTask";
-import NewTask from "./NewTask";
-import CompleteTask from "./CompleteTask";
-import FailedTask from "./FailedTask";
+import TaskCard from "../common/TaskCard";
+import { useApp } from "../../context/AppContext";
 
 
 const TaskList = ({ data }) => {
+  const { updateTaskStatus } = useApp();
+
+  const handleStatusChange = (taskId, newStatus) => {
+    updateTaskStatus(data.id, taskId, newStatus);
+  };
   return (
     <motion.div
       className="w-full max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8"
@@ -16,7 +19,7 @@ const TaskList = ({ data }) => {
       transition={{ duration: 0.5 }}
     >
       <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-6 sm:mb-8 text-center lg:text-left">
-        Task List
+        Your Tasks ({data.tasks.length})
       </h2>
       
       {data.tasks.length === 0 ? (
@@ -27,36 +30,23 @@ const TaskList = ({ data }) => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-        {data.tasks.map((ele, idx) => {
-          const taskComponent = (() => {
-            if (ele.active) {
-              return <AcceptTask key={idx} data={ele} staffId={data.id} taskIndex={idx} />
-            }
-            if (ele.completed) {
-              return <CompleteTask key={idx} data={ele} />
-            }
-            if (ele.failed) {
-              return <FailedTask key={idx} data={ele} />
-            }
-            if (ele.newTask) {
-              return <NewTask key={idx} data={ele} staffId={data.id} taskIndex={idx} />
-            }
-          })();
-
-          return (
+          {data.tasks.map((task, idx) => (
             <motion.div
-              key={idx}
+              key={task.id || idx}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: idx * 0.05 }}
               whileHover={{ y: -2 }}
             >
-              <Link to={`/staff/tasks/${idx}`} className="block">
-                {taskComponent}
+              <Link to={`/staff/tasks/${task.id || idx}`} className="block">
+                <TaskCard
+                  task={task}
+                  onStatusChange={handleStatusChange}
+                  showActions={true}
+                />
               </Link>
             </motion.div>
-          );
-        })}
+          ))}
         </div>
       )}
     </motion.div>

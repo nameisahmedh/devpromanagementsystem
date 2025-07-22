@@ -8,37 +8,40 @@ const staff = [
     taskCount: { inProgress: 2, completed: 1, pending: 0, newtask: 1 },
     tasks: [
       {
+        id: 1001,
         taskTitle: "Home Page UI",
         taskDescription: "Create layout for homepage.",
         category: "frontend",
+        priority: "high",
         taskDate: "2025-05-01",
         dueDate: "2025-05-04",
-        active: true,
-        newTask: false,
-        failed: false,
-        completed: false
+        status: "in-progress",
+        createdAt: "2025-05-01T10:00:00Z",
+        updatedAt: "2025-05-01T10:00:00Z"
       },
       {
+        id: 1002,
         taskTitle: "Fix Navbar Bug",
         taskDescription: "Resolve alignment issue on mobile.",
         category: "frontend",
+        priority: "medium",
         taskDate: "2025-05-02",
         dueDate: "2025-05-05",
-        active: true,
-        newTask: true,
-        failed: false,
-        completed: false
+        status: "new",
+        createdAt: "2025-05-02T10:00:00Z",
+        updatedAt: "2025-05-02T10:00:00Z"
       },
       {
+        id: 1003,
         taskTitle: "Footer Links",
         taskDescription: "Add contact and about links in footer.",
         category: "frontend",
+        priority: "low",
         taskDate: "2025-04-28",
         dueDate: "2025-04-30",
-        active: false,
-        newTask: false,
-        failed: false,
-        completed: true
+        status: "completed",
+        createdAt: "2025-04-28T10:00:00Z",
+        updatedAt: "2025-04-30T10:00:00Z"
       }
     ]
   },
@@ -51,37 +54,40 @@ const staff = [
     taskCount: { inProgress: 1, completed: 2, pending: 0, newtask: 1 },
     tasks: [
       {
+        id: 2001,
         taskTitle: "User Auth API",
         taskDescription: "Implement user login and register APIs.",
         category: "backend",
+        priority: "high",
         taskDate: "2025-05-01",
         dueDate: "2025-05-03",
-        active: true,
-        newTask: false,
-        failed: false,
-        completed: false
+        status: "in-progress",
+        createdAt: "2025-05-01T10:00:00Z",
+        updatedAt: "2025-05-01T10:00:00Z"
       },
       {
+        id: 2002,
         taskTitle: "Database Setup",
         taskDescription: "Setup tables and relations in PostgreSQL.",
         category: "backend",
+        priority: "high",
         taskDate: "2025-04-29",
         dueDate: "2025-05-01",
-        active: false,
-        newTask: false,
-        failed: false,
-        completed: true
+        status: "completed",
+        createdAt: "2025-04-29T10:00:00Z",
+        updatedAt: "2025-05-01T10:00:00Z"
       },
       {
+        id: 2003,
         taskTitle: "API Docs",
         taskDescription: "Write documentation for all endpoints.",
         category: "backend",
+        priority: "medium",
         taskDate: "2025-05-02",
         dueDate: "2025-05-06",
-        active: true,
-        newTask: true,
-        failed: false,
-        completed: false
+        status: "new",
+        createdAt: "2025-05-02T10:00:00Z",
+        updatedAt: "2025-05-02T10:00:00Z"
       }
     ]
   },
@@ -94,37 +100,40 @@ const staff = [
     taskCount: { inProgress: 1, completed: 1, pending: 1, newtask: 1 },
     tasks: [
       {
+        id: 3001,
         taskTitle: "Dashboard Mockup",
         taskDescription: "Design dashboard wireframe.",
         category: "design",
+        priority: "medium",
         taskDate: "2025-05-01",
         dueDate: "2025-05-03",
-        active: true,
-        newTask: false,
-        failed: false,
-        completed: false
+        status: "in-progress",
+        createdAt: "2025-05-01T10:00:00Z",
+        updatedAt: "2025-05-01T10:00:00Z"
       },
       {
+        id: 3002,
         taskTitle: "Logo Update",
         taskDescription: "Revamp the project logo.",
         category: "design",
+        priority: "low",
         taskDate: "2025-04-28",
         dueDate: "2025-04-30",
-        active: false,
-        newTask: false,
-        failed: false,
-        completed: true
+        status: "completed",
+        createdAt: "2025-04-28T10:00:00Z",
+        updatedAt: "2025-04-30T10:00:00Z"
       },
       {
+        id: 3003,
         taskTitle: "Color Research",
         taskDescription: "Suggest 3 color palette options.",
         category: "design",
+        priority: "low",
         taskDate: "2025-05-02",
         dueDate: "2025-05-04",
-        active: false,
-        newTask: true,
-        failed: false,
-        completed: false
+        status: "new",
+        createdAt: "2025-05-02T10:00:00Z",
+        updatedAt: "2025-05-02T10:00:00Z"
       }
     ]
   },
@@ -137,37 +146,40 @@ const staff = [
     taskCount: { inProgress: 1, completed: 2, pending: 0, newtask: 1 },
     tasks: [
       {
+        id: 4001,
         taskTitle: "Write Test Cases",
         taskDescription: "Write unit tests for backend APIs.",
         category: "testing",
+        priority: "high",
         taskDate: "2025-05-03",
         dueDate: "2025-05-06",
-        active: true,
-        newTask: false,
-        failed: false,
-        completed: false
+        status: "in-progress",
+        createdAt: "2025-05-03T10:00:00Z",
+        updatedAt: "2025-05-03T10:00:00Z"
       },
       {
+        id: 4002,
         taskTitle: "Login Flow Testing",
         taskDescription: "Verify all edge cases in login.",
         category: "testing",
+        priority: "high",
         taskDate: "2025-05-01",
         dueDate: "2025-05-02",
-        active: false,
-        newTask: false,
-        failed: false,
-        completed: true
+        status: "completed",
+        createdAt: "2025-05-01T10:00:00Z",
+        updatedAt: "2025-05-02T10:00:00Z"
       },
       {
+        id: 4003,
         taskTitle: "UI Bugs Review",
         taskDescription: "Check and report UI inconsistencies.",
         category: "testing",
+        priority: "medium",
         taskDate: "2025-05-02",
         dueDate: "2025-05-04",
-        active: true,
-        newTask: true,
-        failed: false,
-        completed: false
+        status: "new",
+        createdAt: "2025-05-02T10:00:00Z",
+        updatedAt: "2025-05-02T10:00:00Z"
       }
     ]
   },
@@ -180,37 +192,40 @@ const staff = [
     taskCount: { inProgress: 1, completed: 1, pending: 1, newtask: 1 },
     tasks: [
       {
+        id: 5001,
         taskTitle: "Sidebar Component",
         taskDescription: "Build collapsible sidebar menu.",
         category: "frontend",
+        priority: "medium",
         taskDate: "2025-05-03",
         dueDate: "2025-05-06",
-        active: true,
-        newTask: false,
-        failed: false,
-        completed: false
+        status: "in-progress",
+        createdAt: "2025-05-03T10:00:00Z",
+        updatedAt: "2025-05-03T10:00:00Z"
       },
       {
+        id: 5002,
         taskTitle: "Contact Page",
         taskDescription: "Develop contact form with validation.",
         category: "frontend",
+        priority: "low",
         taskDate: "2025-04-30",
         dueDate: "2025-05-02",
-        active: false,
-        newTask: false,
-        failed: false,
-        completed: true
+        status: "completed",
+        createdAt: "2025-04-30T10:00:00Z",
+        updatedAt: "2025-05-02T10:00:00Z"
       },
       {
+        id: 5003,
         taskTitle: "Theme Switcher",
         taskDescription: "Add light/dark mode toggle.",
         category: "frontend",
+        priority: "low",
         taskDate: "2025-05-04",
         dueDate: "2025-05-07",
-        active: false,
-        newTask: true,
-        failed: false,
-        completed: false
+        status: "new",
+        createdAt: "2025-05-04T10:00:00Z",
+        updatedAt: "2025-05-04T10:00:00Z"
       }
     ]
   }
@@ -226,37 +241,40 @@ const admin = [
     taskCount: { inProgress: 1, completed: 2, pending: 0, newtask: 1 },
     tasks: [
       {
+        id: 9001,
         taskTitle: "Review Progress",
         taskDescription: "Check team updates and task statuses.",
         category: "others",
+        priority: "high",
         taskDate: "2025-05-02",
         dueDate: "2025-05-03",
-        active: true,
-        newTask: false,
-        failed: false,
-        completed: false
+        status: "in-progress",
+        createdAt: "2025-05-02T10:00:00Z",
+        updatedAt: "2025-05-02T10:00:00Z"
       },
       {
+        id: 9002,
         taskTitle: "Update Docs",
         taskDescription: "Edit and publish project documentation.",
         category: "others",
+        priority: "medium",
         taskDate: "2025-04-30",
         dueDate: "2025-05-01",
-        active: false,
-        newTask: false,
-        failed: false,
-        completed: true
+        status: "completed",
+        createdAt: "2025-04-30T10:00:00Z",
+        updatedAt: "2025-05-01T10:00:00Z"
       },
       {
+        id: 9003,
         taskTitle: "Schedule Meeting",
         taskDescription: "Plan meeting with team leads.",
         category: "others",
+        priority: "medium",
         taskDate: "2025-05-03",
         dueDate: "2025-05-04",
-        active: true,
-        newTask: true,
-        failed: false,
-        completed: false
+        status: "new",
+        createdAt: "2025-05-03T10:00:00Z",
+        updatedAt: "2025-05-03T10:00:00Z"
       }
     ]
   }

@@ -1,14 +1,16 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../Navigation/Sidebar";
 import AllTask from "../other/AllTask";
 import CreateTask from "../other/CreateTask";
 import DashboardStats from "../Stats/DashboardStats";
-import { AuthContext } from "../../context/AuthProvider";
+import SearchAndFilter from "../common/SearchAndFilter";
+import { useApp } from "../../context/AppContext";
 import { motion } from "framer-motion";
 
 const AdminDashboard = ({ onLogout }) => {
-  const [userData, setUserData] = useContext(AuthContext);
+  const { userData, filter, searchTerm, setFilter, setSearch } = useApp();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
+  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     if (darkMode) {
@@ -43,28 +45,68 @@ const AdminDashboard = ({ onLogout }) => {
                 Manage your team and monitor progress
               </p>
             </div>
-            <button
-              onClick={() => setDarkMode((prev) => !prev)}
-              className={`px-4 py-2 rounded-lg shadow transition-colors
-                ${darkMode
-                  ? 'bg-[#3a3a4e] text-white hover:bg-[#232946]'
-                  : 'bg-white text-gray-900 border border-gray-200 hover:bg-gray-100'}
-              `}
-            >
-              {darkMode ? "🌙 Dark" : "☀️ Light"}
-            </button>
+            <div className="flex items-center gap-4">
+              <div className="flex bg-[#232946] rounded-lg p-1">
+                <button
+                  onClick={() => setActiveTab('overview')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === 'overview'
+                      ? 'bg-[#6246ea] text-white'
+                      : 'text-[#b8c1ec] hover:text-white'
+                  }`}
+                >
+                  Overview
+                </button>
+                <button
+                  onClick={() => setActiveTab('tasks')}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                    activeTab === 'tasks'
+                      ? 'bg-[#6246ea] text-white'
+                      : 'text-[#b8c1ec] hover:text-white'
+                  }`}
+                >
+                  Task Management
+                </button>
+              </div>
+              <button
+                onClick={() => setDarkMode((prev) => !prev)}
+                className={`px-4 py-2 rounded-lg shadow transition-colors
+                  ${darkMode
+                    ? 'bg-[#3a3a4e] text-white hover:bg-[#232946]'
+                    : 'bg-white text-gray-900 border border-gray-200 hover:bg-gray-100'}
+                `}
+              >
+                {darkMode ? "🌙 Dark" : "☀️ Light"}
+              </button>
+            </div>
           </div>
+          
           <div className="w-full">
             <DashboardStats userRole="admin" />
           </div>
-          <div className="flex flex-col lg:flex-row gap-8 w-full">
-            <div className="w-full lg:w-1/2">
-              <CreateTask />
+          
+          {activeTab === 'overview' && (
+            <div className="flex flex-col lg:flex-row gap-8 w-full">
+              <div className="w-full lg:w-1/2">
+                <CreateTask />
+              </div>
+              <div className="w-full lg:w-1/2">
+                <AllTask />
+              </div>
             </div>
-            <div className="w-full lg:w-1/2">
-              <AllTask />
+          )}
+          
+          {activeTab === 'tasks' && (
+            <div className="w-full">
+              <SearchAndFilter
+                searchTerm={searchTerm}
+                onSearchChange={setSearch}
+                filter={filter}
+                onFilterChange={setFilter}
+              />
+              <AllTask showDetailed={true} />
             </div>
-          </div>
+          )}
         </motion.div>
       </main>
     </div>

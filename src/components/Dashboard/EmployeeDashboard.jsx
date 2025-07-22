@@ -1,10 +1,13 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import Sidebar from '../Navigation/Sidebar'
 import TaskListCount from '../other/TakListCount'
 import TaskList from '../TaskList/TaskList'
+import SearchAndFilter from '../common/SearchAndFilter'
+import { useApp } from '../../context/AppContext'
 import { motion } from 'framer-motion'
 
 const EmployeeDashboard = ({ data, onLogout }) => {
+  const { filter, searchTerm, setFilter, setSearch, getFilteredTasks } = useApp();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
 
   useEffect(() => {
@@ -16,6 +19,10 @@ const EmployeeDashboard = ({ data, onLogout }) => {
       localStorage.setItem('theme', 'light');
     }
   }, [darkMode]);
+
+  const filteredTasks = useMemo(() => {
+    return getFilteredTasks(data?.tasks || []);
+  }, [data?.tasks, filter, searchTerm, getFilteredTasks]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] dark:from-[#181824] dark:via-[#232946] dark:to-[#181824]">
@@ -44,7 +51,15 @@ const EmployeeDashboard = ({ data, onLogout }) => {
           </div>
           
           <TaskListCount data={data} />
-          <TaskList data={data} />
+          
+          <SearchAndFilter
+            searchTerm={searchTerm}
+            onSearchChange={setSearch}
+            filter={filter}
+            onFilterChange={setFilter}
+          />
+          
+          <TaskList data={{ ...data, tasks: filteredTasks }} />
         </motion.div>
       </div>
     </div>

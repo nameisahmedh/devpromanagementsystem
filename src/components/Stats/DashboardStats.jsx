@@ -1,9 +1,9 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
-import { AuthContext } from '../../context/AuthProvider'
+import { useApp } from '../../context/AppContext'
 
 const DashboardStats = ({ userRole }) => {
-  const [userData] = useContext(AuthContext)
+  const { userData } = useApp()
 
   const calculateStats = () => {
     if (!userData) return { totalStaff: 0, totalTasks: 0, completedTasks: 0, pendingTasks: 0 }
@@ -12,16 +12,23 @@ const DashboardStats = ({ userRole }) => {
     let totalTasks = 0
     let completedTasks = 0
     let pendingTasks = 0
+    let inProgressTasks = 0
+    let overdueTasks = 0
 
+    const today = new Date().toISOString().split('T')[0]
     userData.forEach(staff => {
       if (staff.tasks) {
         totalTasks += staff.tasks.length
-        completedTasks += staff.tasks.filter(task => task.completed).length
-        pendingTasks += staff.tasks.filter(task => !task.completed && !task.failed).length
+        completedTasks += staff.tasks.filter(task => task.status === 'completed').length
+        pendingTasks += staff.tasks.filter(task => task.status === 'failed').length
+        inProgressTasks += staff.tasks.filter(task => task.status === 'in-progress').length
+        overdueTasks += staff.tasks.filter(task => 
+          task.dueDate < today && task.status !== 'completed' && task.status !== 'failed'
+        ).length
       }
     })
 
-    return { totalStaff, totalTasks, completedTasks, pendingTasks }
+    return { totalStaff, totalTasks, completedTasks, pendingTasks, inProgressTasks, overdueTasks }
   }
 
   const stats = calculateStats()
@@ -50,16 +57,30 @@ const DashboardStats = ({ userRole }) => {
       change: `${completionRate}% completion rate`
     },
     {
-      title: 'Pending',
-      value: stats.pendingTasks,
+      title: 'In Progress',
+      value: stats.inProgressTasks,
       icon: '⏳',
       color: 'from-orange-500 to-orange-600',
-      change: 'Need attention'
+      change: 'Active tasks'
+    },
+    {
+      title: 'Failed',
+      value: stats.pendingTasks,
+      icon: '❌',
+      color: 'from-red-500 to-red-600',
+      change: 'Need review'
+    },
+    {
+      title: 'Overdue',
+      value: stats.overdueTasks,
+      icon: '🚨',
+      color: 'from-red-600 to-red-700',
+      change: 'Urgent attention'
     }
   ]
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
       {statCards.map((stat, index) => (
         <motion.div
           key={stat.title}

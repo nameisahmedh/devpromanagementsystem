@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Login from './components/Auth/Login'
@@ -9,13 +9,13 @@ import Profile from './components/Profile/Profile'
 import Analytics from './components/Analytics/Analytics'
 import NotFound from './components/NotFound/NotFound'
 import LoadingScreen from './components/Loading/LoadingScreen'
+import { useApp } from './context/AppContext'
 import './App.css'
-import { AuthContext } from './context/AuthProvider'
 
 const App = () => {
+  const { userData, getStaffByName } = useApp()
   const [user, setUser] = useState(null)
   const [loggedInUserData, setLoggedInUserData] = useState(null)
-  const [userData, setUserData] = useContext(AuthContext)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -39,9 +39,7 @@ const App = () => {
       setLoggedInUserData(null)
       localStorage.setItem('loggedInUser', JSON.stringify({ role: 'admin' }))
     } else if (userData) {
-      const staff = userData.find(
-        (e) => email === e.email && e.password === password
-      )
+      const staff = userData.find(e => email === e.email && e.password === password)
       if (staff) {
         setUser('staff')
         setLoggedInUserData(staff)

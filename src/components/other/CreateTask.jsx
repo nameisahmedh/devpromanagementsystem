@@ -1,26 +1,33 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { FaArrowLeft } from "react-icons/fa";
-import { AuthContext } from '../../context/AuthProvider';
+import { useApp } from '../../context/AppContext';
 import { FaRegCalendarAlt } from "react-icons/fa";
 
 
 
 const CreateTask = () => {
-    const [userData,setUserData] = useContext(AuthContext);
+    const { userData, addTask, getStaffByName } = useApp();
     const [taskTitle, setTaskTitle] = useState('');
     const [taskDescription, setTaskDescription] = useState('');
     const [assignTo, setAssignTo] = useState('');
     const [category, setCategory] = useState('');
+    const [priority, setPriority] = useState('medium');
     const [taskDate, setTaskDate] = useState('');
     const [dueDate, setDueDate] = useState('');
 
     const submitHandler = (e) => {
         e.preventDefault();
 
-        if (!taskTitle || !taskDescription || !assignTo || !category || !taskDate || !dueDate) {
+        if (!taskTitle || !taskDescription || !assignTo || !category || !priority || !taskDate || !dueDate) {
             toast.error('Please fill in all fields');
+            return;
+        }
+
+        // Validate dates
+        if (new Date(dueDate) <= new Date(taskDate)) {
+            toast.error('Due date must be after the assigned date');
             return;
         }
 
@@ -28,36 +35,26 @@ const CreateTask = () => {
             taskTitle,
             taskDescription,
             category,
+            priority,
             taskDate,
             dueDate,
-            active: false,
-            newTask: true,
-            failed: false,
-            completed: false
+            status: 'new'
         };
 
-        const assignedUser = userData.find(user => user.name.toLowerCase() === assignTo.toLowerCase());
+        const assignedUser = getStaffByName(assignTo);
         if (!assignedUser) {
             toast.error('User not found. Please check the name.');
             return;
         }
 
-        const data = userData;
-        data.forEach(function (ele) {
-            if (assignTo === ele.name) {
-                if (!ele.tasks) ele.tasks = [];
-                ele.tasks.push(task);
-                if (!ele.taskCount) ele.taskCount = { newtask: 0 };
-                ele.taskCount.newtask = ele.taskCount.newtask + 1;
-            }
-        });
-        setUserData(data)
-        toast.success(`Task assigned to ${assignTo} successfully!`);
+        addTask(assignedUser.id, task);
+        
         // Clear form
         setTaskTitle('');
         setTaskDescription('');
         setAssignTo('');
         setCategory('');
+        setPriority('medium');
         setTaskDate('');
         setDueDate('');
     };
@@ -113,13 +110,18 @@ const CreateTask = () => {
 
                             <div>
                                 <label className="block text-[#cdd6f4] font-semibold mb-1">Assign To</label>
-                                <input
+                                <select
                                     value={assignTo}
                                     onChange={(e) => setAssignTo(e.target.value)}
-                                    type="text"
-                                    placeholder="Person's name or team"
                                     className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-                                />
+                                >
+                                    <option value="">Select Staff Member</option>
+                                    {userData?.map((staff) => (
+                                        <option key={staff.id} value={staff.name}>
+                                            {staff.name} ({staff.role})
+                                        </option>
+                                    ))}
+                                </select>
                             </div>
 
                             <div>
@@ -134,6 +136,7 @@ const CreateTask = () => {
                                     <option value="backend">Backend</option>
                                     <option value="devops">DevOps</option>
                                     <option value="design">Design</option>
+                                    <option value="testing">Testing</option>
                                     <option value="other">Other</option>
                                 </select>
                             </div>
@@ -142,12 +145,26 @@ const CreateTask = () => {
                         {/* Right Column */}
                         <div className="space-y-6">
                             <div>
+                                <label className="block text-[#cdd6f4] font-semibold mb-1">Priority</label>
+                                <select
+                                    value={priority}
+                                    onChange={(e) => setPriority(e.target.value)}
+                                    className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                >
+                                    <option value="low">Low Priority</option>
+                                    <option value="medium">Medium Priority</option>
+                                    <option value="high">High Priority</option>
+                                </select>
+                            </div>
+                            
+                            <div>
                                 <label className="block text-[#cdd6f4] font-semibold mb-1">Date Assigned</label>
                                 <input
                                     type="date"
                                     value={taskDate}
                                     onChange={(e) => setTaskDate(e.target.value)}
                                     className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                    min={new Date().toISOString().split('T')[0]}
                                 />
                             </div>
 
@@ -158,6 +175,7 @@ const CreateTask = () => {
                                     value={dueDate}
                                     onChange={(e) => setDueDate(e.target.value)}
                                     className="w-full bg-[#1e1e2f] text-white rounded-md px-3 py-2 border border-[#3a3a4e] focus:ring-2 focus:ring-blue-500 transition-all duration-200"
+                                    min={taskDate || new Date().toISOString().split('T')[0]}
                                 />
                             </div>
 
