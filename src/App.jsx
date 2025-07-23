@@ -7,13 +7,15 @@ import AdminDashboard from './components/Dashboard/AdminDashboard'
 import TaskDetails from './components/Tasks/TaskDetails'
 import Profile from './components/Profile/Profile'
 import Analytics from './components/Analytics/Analytics'
+import UserManagement from './components/UserManagement/UserManagement'
+import Settings from './components/Settings/Settings'
 import NotFound from './components/NotFound/NotFound'
 import LoadingScreen from './components/Loading/LoadingScreen'
 import { useApp } from './context/AppContext'
 import './App.css'
 
 const App = () => {
-  const { userData, getStaffByName } = useApp()
+  const { userData, adminData, getStaffByName } = useApp()
   const [user, setUser] = useState(null)
   const [loggedInUserData, setLoggedInUserData] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -34,12 +36,21 @@ const App = () => {
   }, [])
 
   const handleLogin = (email, password) => {
+    // Check admin login
     if (email === 'ahmed@mail.com' && password === '123') {
+      const adminUser = adminData?.[0] || { name: 'Ahmed', email: 'ahmed@mail.com', role: 'admin' }
       setUser('admin')
-      setLoggedInUserData(null)
-      localStorage.setItem('loggedInUser', JSON.stringify({ role: 'admin' }))
-    } else if (userData) {
-      const staff = userData.find(e => email === e.email && e.password === password)
+      setLoggedInUserData(adminUser)
+      localStorage.setItem('loggedInUser', JSON.stringify({ 
+        role: 'admin', 
+        data: adminUser 
+      }))
+      return
+    }
+
+    // Check staff login
+    if (userData) {
+      const staff = userData.find(e => email === e.email && password === e.password)
       if (staff) {
         setUser('staff')
         setLoggedInUserData(staff)
@@ -47,12 +58,11 @@ const App = () => {
           'loggedInUser',
           JSON.stringify({ role: 'staff', data: staff, staffId: staff.id })
         )
-      } else {
-        throw new Error('Invalid credentials')
+        return
       }
-    } else {
-      throw new Error('Invalid credentials')
     }
+    
+    throw new Error('Invalid credentials')
   }
 
   // Update logged in user data when userData changes
@@ -131,6 +141,26 @@ const App = () => {
             element={
               user === 'admin' ? (
                 <Analytics onLogout={handleLogout} userRole="admin" />
+              ) : (
+                <Navigate to="/login" />
+              )
+            } 
+          />
+          <Route 
+            path="/admin/users" 
+            element={
+              user === 'admin' ? (
+                <UserManagement onLogout={handleLogout} />
+              ) : (
+                <Navigate to="/login" />
+              )
+            } 
+          />
+          <Route 
+            path="/admin/settings" 
+            element={
+              user === 'admin' ? (
+                <Settings onLogout={handleLogout} userRole="admin" />
               ) : (
                 <Navigate to="/login" />
               )

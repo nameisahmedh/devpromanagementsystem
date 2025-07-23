@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { getLocalStorage, setLocalStorage } from '../utils/localStorage';
+import { dataStorage } from '../utils/dataStorage';
 import toast from 'react-hot-toast';
 
 const AppContext = createContext();
@@ -13,22 +13,32 @@ const ACTIONS = {
   UPDATE_TASK: 'UPDATE_TASK',
   SET_FILTER: 'SET_FILTER',
   SET_SEARCH: 'SET_SEARCH',
-  MARK_OVERDUE_TASKS: 'MARK_OVERDUE_TASKS'
+  MARK_OVERDUE_TASKS: 'MARK_OVERDUE_TASKS',
+  ADD_STAFF: 'ADD_STAFF',
+  REMOVE_STAFF: 'REMOVE_STAFF',
+  UPDATE_STAFF: 'UPDATE_STAFF'
 };
 
 // Initial state
 const initialState = {
   userData: [],
+  adminData: [],
   filter: 'all',
   searchTerm: '',
-  notifications: []
+  notifications: [],
+  settings: {}
 };
 
 // Reducer function
 const appReducer = (state, action) => {
   switch (action.type) {
     case ACTIONS.SET_USER_DATA:
-      return { ...state, userData: action.payload };
+      return { 
+        ...state, 
+        userData: action.payload.staff || [],
+        adminData: action.payload.admin || [],
+        settings: action.payload.settings || {}
+      };
     
     case ACTIONS.UPDATE_TASK_STATUS: {
       const { staffId, taskId, newStatus } = action.payload;
@@ -44,14 +54,13 @@ const appReducer = (state, action) => {
             }
             return task;
           });
-
           return { ...staff, tasks: updatedTasks };
         }
         return staff;
       });
       
-      // Update localStorage
-      localStorage.setItem('staff', JSON.stringify(updatedData));
+      // Update storage
+      dataStorage.updateStaff(updatedData);
       return { ...state, userData: updatedData };
     }
     
@@ -64,21 +73,14 @@ const appReducer = (state, action) => {
             id: Date.now() + Math.random(),
             status: 'new',
             createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            newTask: true,
-            active: false,
-            completed: false,
-            failed: false
+            updatedAt: new Date().toISOString()
           };
-          
-          const updatedTasks = [...staff.tasks, newTask];
-          const taskCount = calculateTaskCount(updatedTasks);
-          return { ...staff, tasks: updatedTasks, taskCount };
+          return { ...staff, tasks: [...staff.tasks, newTask] };
         }
         return staff;
       });
       
-      localStorage.setItem('staff', JSON.stringify(updatedData));
+      dataStorage.updateStaff(updatedData);
       return { ...state, userData: updatedData };
     }
     
@@ -86,14 +88,39 @@ const appReducer = (state, action) => {
       const { staffId, taskId } = action.payload;
       const updatedData = state.userData.map(staff => {
         if (staff.id === staffId) {
-          const updatedTasks = staff.tasks.filter(task => task.id !== taskId);
-          const taskCount = calculateTaskCount(updatedTasks);
-          return { ...staff, tasks: updatedTasks, taskCount };
+          return { ...staff, tasks: staff.tasks.filter(task => task.id !== taskId) };
         }
         return staff;
       });
       
-      localStorage.setItem('staff', JSON.stringify(updatedData));
+      dataStorage.updateStaff(updatedData);
+      return { ...state, userData: updatedData };
+    }
+
+    case ACTIONS.ADD_STAFF: {
+      const newStaff = {
+        ...action.payload,
+        id: Date.now(),
+        tasks: [],
+        joinDate: new Date().toISOString().split('T')[0]
+      };
+      const updatedData = [...state.userData, newStaff];
+      dataStorage.updateStaff(updatedData);
+      return { ...state, userData: updatedData };
+    }
+
+    case ACTIONS.REMOVE_STAFF: {
+      const updatedData = state.userData.filter(staff => staff.id !== action.payload);
+      dataStorage.updateStaff(updatedData);
+      return { ...state, userData: updatedData };
+    }
+
+    case ACTIONS.UPDATE_STAFF: {
+      const { staffId, updates } = action.payload;
+      const updatedData = state.userData.map(staff => 
+        staff.id === staffId ? { ...staff, ...updates } : staff
+      );
+      dataStorage.updateStaff(updatedData);
       return { ...state, userData: updatedData };
     }
     
@@ -107,7 +134,7 @@ const appReducer = (state, action) => {
       const today = new Date().toISOString().split('T')[0];
       const updatedData = state.userData.map(staff => {
         const updatedTasks = staff.tasks.map(task => {
-          if (task.dueDate < today && !task.completed && !task.failed) {
+          if (task.dueDate < today && task.status !== 'completed' && task.status !== 'failed') {
             return { ...task, isOverdue: true };
           }
           return task;
@@ -123,25 +150,14 @@ const appReducer = (state, action) => {
   }
 };
 
-// Helper function to calculate task counts
-const calculateTaskCount = (tasks) => {
-  return {
-    new: tasks.filter(task => task.status === 'new').length,
-    inProgress: tasks.filter(task => task.status === 'in-progress').length,
-    completed: tasks.filter(task => task.status === 'completed').length,
-    failed: tasks.filter(task => task.status === 'failed').length,
-    total: tasks.length
-  };
-};
-
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   useEffect(() => {
-    setLocalStorage();
-    const localStorageData = getLocalStorage();
-    if (localStorageData?.staff) {
-      dispatch({ type: ACTIONS.SET_USER_DATA, payload: localStorageData.staff });
+    // Load data from storage
+    const data = dataStorage.getData();
+    if (data) {
+      dispatch({ type: ACTIONS.SET_USER_DATA, payload: data });
     }
   }, []);
 
@@ -189,6 +205,30 @@ export const AppProvider = ({ children }) => {
     toast.success('Task deleted successfully!');
   };
 
+  const addStaff = (staffData) => {
+    dispatch({
+      type: ACTIONS.ADD_STAFF,
+      payload: staffData
+    });
+    toast.success('Staff member added successfully!');
+  };
+
+  const removeStaff = (staffId) => {
+    dispatch({
+      type: ACTIONS.REMOVE_STAFF,
+      payload: staffId
+    });
+    toast.success('Staff member removed successfully!');
+  };
+
+  const updateStaff = (staffId, updates) => {
+    dispatch({
+      type: ACTIONS.UPDATE_STAFF,
+      payload: { staffId, updates }
+    });
+    toast.success('Staff information updated successfully!');
+  };
+
   const setFilter = (filter) => {
     dispatch({ type: ACTIONS.SET_FILTER, payload: filter });
   };
@@ -228,16 +268,39 @@ export const AppProvider = ({ children }) => {
     );
   };
 
+  const getStaffById = (id) => {
+    return state.userData.find(staff => staff.id === id);
+  };
+
+  // Calculate task statistics
+  const getTaskStats = () => {
+    const allTasks = state.userData.flatMap(staff => staff.tasks);
+    return {
+      total: allTasks.length,
+      new: allTasks.filter(task => task.status === 'new').length,
+      inProgress: allTasks.filter(task => task.status === 'in-progress').length,
+      completed: allTasks.filter(task => task.status === 'completed').length,
+      failed: allTasks.filter(task => task.status === 'failed').length,
+      overdue: allTasks.filter(task => task.isOverdue).length
+    };
+  };
+
   const value = {
     ...state,
     updateTaskStatus,
     addTask,
     deleteTask,
+    addStaff,
+    removeStaff,
+    updateStaff,
     setFilter,
     setSearch,
     getFilteredTasks,
     getTaskById,
-    getStaffByName
+    getStaffByName,
+    getStaffById,
+    getTaskStats,
+    dataStorage
   };
 
   return (
