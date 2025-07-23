@@ -15,7 +15,6 @@ import {
 
 const Sidebar = ({ userRole, onLogout }) => {
   const [isMobileOpen, setIsMobileOpen] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(false)
   const location = useLocation()
 
   useEffect(() => {
@@ -48,11 +47,10 @@ const Sidebar = ({ userRole, onLogout }) => {
   const menuItems = userRole === 'admin' ? adminMenuItems : staffMenuItems
 
   const toggleMobile = () => setIsMobileOpen(!isMobileOpen)
-  const toggleCollapse = () => setIsCollapsed(!isCollapsed)
 
   return (
     <>
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Button - Only show on small screens */}
       <motion.button
         onClick={toggleMobile}
         className="lg:hidden fixed top-4 left-4 z-50 bg-[#232946] text-white p-3 rounded-xl shadow-lg border border-[#3a3a4e] hover:bg-[#6246ea] transition-colors"
@@ -84,22 +82,6 @@ const Sidebar = ({ userRole, onLogout }) => {
         </AnimatePresence>
       </motion.button>
 
-      {/* Desktop Collapse Button */}
-      <motion.button
-        onClick={toggleCollapse}
-        className="hidden lg:block fixed top-4 z-50 bg-[#232946] text-white p-3 rounded-xl shadow-lg border border-[#3a3a4e] hover:bg-[#6246ea] transition-all duration-300"
-        style={{ left: isCollapsed ? '16px' : '260px' }}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        <motion.div
-          animate={{ rotate: isCollapsed ? 180 : 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Menu className="w-6 h-6" />
-        </motion.div>
-      </motion.button>
-
       {/* Mobile Overlay */}
       <AnimatePresence>
         {isMobileOpen && (
@@ -114,19 +96,15 @@ const Sidebar = ({ userRole, onLogout }) => {
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
+      {/* Sidebar - Always visible on desktop, toggle on mobile */}
       <motion.div
         className={`
-          bg-gradient-to-b from-[#232946] to-[#1a1a2e] h-screen fixed left-0 top-0 z-40 transition-all duration-300 border-r border-[#3a3a4e] shadow-2xl
-          ${isCollapsed && window.innerWidth >= 1024 ? 'w-20' : 'w-64'}
-          ${isMobileOpen ? 'translate-x-0' : window.innerWidth >= 1024 ? 'translate-x-0' : '-translate-x-full'}
+          bg-gradient-to-b from-[#232946] to-[#1a1a2e] h-screen fixed left-0 top-0 z-40 w-64 transition-all duration-300 border-r border-[#3a3a4e] shadow-2xl
+          ${isMobileOpen ? 'translate-x-0' : 'lg:translate-x-0 -translate-x-full'}
           flex flex-col overflow-hidden
         `}
         initial={{ x: -100 }}
-        animate={{ 
-          x: 0,
-          width: isCollapsed && window.innerWidth >= 1024 ? 80 : 256
-        }}
+        animate={{ x: 0 }}
         transition={{ duration: 0.3 }}
       >
         <div className="p-4 h-full flex flex-col">
@@ -143,19 +121,14 @@ const Sidebar = ({ userRole, onLogout }) => {
               >
                 <Code className="w-7 h-7 text-white" />
               </motion.div>
-              <AnimatePresence>
-                {((!isCollapsed && window.innerWidth >= 1024) || isMobileOpen || window.innerWidth < 1024) && (
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <h2 className="text-white font-bold text-xl">DevPro</h2>
-                    <p className="text-[#b8c1ec] text-xs">Solutions</p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <h2 className="text-white font-bold text-xl">DevPro</h2>
+                <p className="text-[#b8c1ec] text-xs">Solutions</p>
+              </motion.div>
             </div>
           </motion.div>
 
@@ -188,19 +161,14 @@ const Sidebar = ({ userRole, onLogout }) => {
                     >
                       <IconComponent className={`w-6 h-6 ${isActive ? 'text-white' : 'group-hover:text-[#6246ea]'} relative z-10`} />
                     </motion.div>
-                    <AnimatePresence>
-                      {((!isCollapsed && window.innerWidth >= 1024) || isMobileOpen || window.innerWidth < 1024) && (
-                        <motion.span 
-                          className="font-medium relative z-10"
-                          initial={{ opacity: 0, x: -10 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          exit={{ opacity: 0, x: -10 }}
-                          transition={{ duration: 0.2 }}
-                        >
-                          {item.label}
-                        </motion.span>
-                      )}
-                    </AnimatePresence>
+                    <motion.span 
+                      className="font-medium relative z-10"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      {item.label}
+                    </motion.span>
                     {isActive && (
                       <motion.div
                         className="absolute inset-0 bg-gradient-to-r from-[#6246ea]/20 to-[#3e54ac]/20 rounded-xl"
@@ -215,23 +183,18 @@ const Sidebar = ({ userRole, onLogout }) => {
           </nav>
 
           {/* User Role Badge */}
-          <AnimatePresence>
-            {((!isCollapsed && window.innerWidth >= 1024) || isMobileOpen || window.innerWidth < 1024) && (
-              <motion.div 
-                className="mb-4 p-4 bg-gradient-to-r from-[#3a3a4e] to-[#2a2a3e] rounded-xl border border-[#4a4a5e]"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="text-xs text-[#b8c1ec] mb-1">Logged in as</div>
-                <div className="text-white font-semibold capitalize flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  {userRole}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          <motion.div 
+            className="mb-4 p-4 bg-gradient-to-r from-[#3a3a4e] to-[#2a2a3e] rounded-xl border border-[#4a4a5e]"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <div className="text-xs text-[#b8c1ec] mb-1">Logged in as</div>
+            <div className="text-white font-semibold capitalize flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              {userRole}
+            </div>
+          </motion.div>
 
           {/* Logout Button */}
           <motion.button
@@ -249,19 +212,14 @@ const Sidebar = ({ userRole, onLogout }) => {
             >
               <LogOut className="w-6 h-6 group-hover:text-red-400 relative z-10" />
             </motion.div>
-            <AnimatePresence>
-              {((!isCollapsed && window.innerWidth >= 1024) || isMobileOpen || window.innerWidth < 1024) && (
-                <motion.span 
-                  className="font-medium relative z-10"
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -10 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  Logout
-                </motion.span>
-              )}
-            </AnimatePresence>
+            <motion.span 
+              className="font-medium relative z-10"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              Logout
+            </motion.span>
           </motion.button>
         </div>
       </motion.div>

@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../Navigation/Sidebar";
-import AllTask from "../other/AllTask";
 import CreateTask from "../other/CreateTask";
 import DashboardStats from "../Stats/DashboardStats";
 import SearchAndFilter from "../common/SearchAndFilter";
 import { useApp } from "../../context/AppContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Users, BarChart3, Settings, Sun, Moon } from "lucide-react";
+import { Plus, Users, BarChart3, Sun, Moon, CheckCircle, Clock, AlertTriangle } from "lucide-react";
 
 const AdminDashboard = ({ onLogout }) => {
-  const { userData, filter, searchTerm, setFilter, setSearch } = useApp();
+  const { userData, filter, searchTerm, setFilter, setSearch, getFilteredTasks } = useApp();
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('theme') === 'dark');
   const [activeTab, setActiveTab] = useState('overview');
 
@@ -27,9 +26,68 @@ const AdminDashboard = ({ onLogout }) => {
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'tasks', label: 'Task Management', icon: Users },
     { id: 'create', label: 'Create Task', icon: Plus }
   ];
+
+  // Get top performers (staff with more than 5 completed tasks)
+  const getTopPerformers = () => {
+    if (!userData) return []
+    
+    return userData
+      .map(staff => {
+        const completedTasks = staff.tasks?.filter(task => task.status === 'completed').length || 0
+        const totalTasks = staff.tasks?.length || 0
+        const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0
+        
+        return {
+          ...staff,
+          completedTasks,
+          totalTasks,
+          completionRate
+        }
+      })
+      .filter(staff => staff.completedTasks >= 5) // Only show staff with 5+ completed tasks
+      .sort((a, b) => b.completedTasks - a.completedTasks)
+      .slice(0, 5) // Top 5 performers
+  }
+
+  // Get recent tasks summary
+  const getRecentTasksSummary = () => {
+    if (!userData) return []
+    
+    const allTasks = userData.flatMap(staff => 
+      staff.tasks?.map(task => ({
+        ...task,
+        staffName: staff.name,
+        staffRole: staff.role
+      })) || []
+    )
+    
+    return allTasks
+      .sort((a, b) => new Date(b.createdAt || b.taskDate) - new Date(a.createdAt || a.taskDate))
+      .slice(0, 8) // Show only 8 recent tasks
+  }
+
+  const topPerformers = getTopPerformers()
+  const recentTasks = getRecentTasksSummary()
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case 'completed': return <CheckCircle className="w-4 h-4 text-green-400" />
+      case 'in-progress': return <Clock className="w-4 h-4 text-yellow-400" />
+      case 'failed': return <AlertTriangle className="w-4 h-4 text-red-400" />
+      default: return <AlertTriangle className="w-4 h-4 text-blue-400" />
+    }
+  }
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case 'completed': return 'bg-green-500/20 text-green-400'
+      case 'in-progress': return 'bg-yellow-500/20 text-yellow-400'
+      case 'failed': return 'bg-red-500/20 text-red-400'
+      default: return 'bg-blue-500/20 text-blue-400'
+    }
+  }
 
   return (
     <div className={`min-h-screen flex flex-col lg:flex-row transition-colors duration-300 ${
@@ -41,7 +99,7 @@ const AdminDashboard = ({ onLogout }) => {
       
       <main className="flex-1 w-full lg:ml-64 transition-all duration-300">
         <motion.div
-          className="max-w-full mx-auto p-4 sm:p-6 lg:p-8 pt-20 lg:pt-16 transition-colors duration-300"
+          className="max-w-full mx-auto p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8 transition-colors duration-300"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -124,7 +182,7 @@ const AdminDashboard = ({ onLogout }) => {
                 <motion.button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 relative ${
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all duration-200 relative ${
                     activeTab === tab.id
                       ? 'bg-gradient-to-r from-[#6246ea] to-[#3e54ac] text-white shadow-lg'
                       : darkMode 
@@ -135,7 +193,7 @@ const AdminDashboard = ({ onLogout }) => {
                   whileTap={{ scale: 0.98 }}
                 >
                   <IconComponent className="w-5 h-5" />
-                  <span className="hidden sm:inline">{tab.label}</span>
+                  <span>{tab.label}</span>
                   {activeTab === tab.id && (
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-[#6246ea]/20 to-[#3e54ac]/20 rounded-lg"
@@ -159,65 +217,112 @@ const AdminDashboard = ({ onLogout }) => {
                 transition={{ duration: 0.3 }}
                 className="grid grid-cols-1 xl:grid-cols-2 gap-8"
               >
-                <div className="space-y-6">
-                  <AllTask darkMode={darkMode} showSummary={true} />
-                </div>
-                <div className="space-y-6">
-                  <motion.div
-                    className={`p-6 rounded-xl shadow-lg ${
-                      darkMode 
-                        ? 'bg-[#232946] border border-[#3a3a4e]' 
-                        : 'bg-white border border-gray-200'
-                    }`}
-                    whileHover={{ scale: 1.02 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <h3 className={`text-xl font-bold mb-4 ${
-                      darkMode ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      Quick Actions
-                    </h3>
-                    <div className="space-y-3">
-                      <button
-                        onClick={() => setActiveTab('create')}
-                        className="w-full flex items-center gap-3 p-3 bg-gradient-to-r from-[#6246ea] to-[#3e54ac] text-white rounded-lg hover:shadow-lg transition-all duration-300"
-                      >
-                        <Plus className="w-5 h-5" />
-                        Create New Task
-                      </button>
-                      <button
-                        onClick={() => setActiveTab('tasks')}
-                        className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all duration-300 ${
-                          darkMode 
-                            ? 'bg-[#3a3a4e] text-white hover:bg-[#4a4a5e]' 
-                            : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-                        }`}
-                      >
-                        <Users className="w-5 h-5" />
-                        Manage All Tasks
-                      </button>
+                {/* Top Performers */}
+                <div className={`rounded-xl p-6 shadow-lg border ${
+                  darkMode 
+                    ? 'bg-[#232946] border-[#3a3a4e]' 
+                    : 'bg-white border-gray-200'
+                }`}>
+                  <h3 className={`text-xl font-bold mb-6 ${
+                    darkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    🏆 Top Performers (5+ Completed Tasks)
+                  </h3>
+                  
+                  {topPerformers.length === 0 ? (
+                    <div className="text-center py-8">
+                      <div className="text-4xl mb-4">🎯</div>
+                      <p className={`${darkMode ? 'text-[#b8c1ec]' : 'text-gray-600'}`}>
+                        No top performers yet. Complete more tasks to appear here!
+                      </p>
                     </div>
-                  </motion.div>
+                  ) : (
+                    <div className="space-y-4">
+                      {topPerformers.map((performer, index) => (
+                        <motion.div
+                          key={performer.id}
+                          className={`flex items-center justify-between p-4 rounded-lg ${
+                            darkMode ? 'bg-[#1a1a2e]' : 'bg-gray-50'
+                          }`}
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.1 }}
+                        >
+                          <div className="flex items-center gap-4">
+                            <div className="relative">
+                              <div className="w-12 h-12 bg-gradient-to-r from-[#6246ea] to-[#3e54ac] rounded-full flex items-center justify-center text-white font-bold">
+                                {performer.name.charAt(0)}
+                              </div>
+                              {index === 0 && (
+                                <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center text-xs">
+                                  👑
+                                </div>
+                              )}
+                            </div>
+                            <div>
+                              <h4 className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                                {performer.name}
+                              </h4>
+                              <p className={`text-sm capitalize ${darkMode ? 'text-[#b8c1ec]' : 'text-gray-600'}`}>
+                                {performer.role}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {performer.completedTasks}
+                            </div>
+                            <div className={`text-sm ${darkMode ? 'text-[#b8c1ec]' : 'text-gray-600'}`}>
+                              completed ({performer.completionRate}%)
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              </motion.div>
-            )}
 
-            {activeTab === 'tasks' && (
-              <motion.div
-                key="tasks"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <SearchAndFilter
-                  searchTerm={searchTerm}
-                  onSearchChange={setSearch}
-                  filter={filter}
-                  onFilterChange={setFilter}
-                  darkMode={darkMode}
-                />
-                <AllTask showDetailed={true} darkMode={darkMode} />
+                {/* Recent Tasks Summary */}
+                <div className={`rounded-xl p-6 shadow-lg border ${
+                  darkMode 
+                    ? 'bg-[#232946] border-[#3a3a4e]' 
+                    : 'bg-white border-gray-200'
+                }`}>
+                  <h3 className={`text-xl font-bold mb-6 ${
+                    darkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    📋 Recent Tasks
+                  </h3>
+                  
+                  <div className="space-y-3 max-h-96 overflow-y-auto">
+                    {recentTasks.map((task, index) => (
+                      <motion.div
+                        key={task.id}
+                        className={`flex items-center justify-between p-3 rounded-lg ${
+                          darkMode ? 'bg-[#1a1a2e]' : 'bg-gray-50'
+                        }`}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: index * 0.05 }}
+                      >
+                        <div className="flex items-center gap-3 flex-1 min-w-0">
+                          {getStatusIcon(task.status)}
+                          <div className="flex-1 min-w-0">
+                            <h4 className={`font-medium truncate ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                              {task.taskTitle}
+                            </h4>
+                            <p className={`text-sm ${darkMode ? 'text-[#b8c1ec]' : 'text-gray-600'}`}>
+                              {task.staffName} • {task.category}
+                            </p>
+                          </div>
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${getStatusColor(task.status)}`}>
+                          {task.status.replace('-', ' ')}
+                        </span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
               </motion.div>
             )}
 
