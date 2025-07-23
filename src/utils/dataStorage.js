@@ -332,6 +332,7 @@ class DataStorage {
             }
           ]
         }
+        ,
         {
           id: 5,
           name: "Emma",
