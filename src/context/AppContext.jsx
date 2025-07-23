@@ -156,8 +156,16 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     // Load data from storage
     const data = dataStorage.getData();
+    console.log('Loaded data from storage:', data);
     if (data) {
       dispatch({ type: ACTIONS.SET_USER_DATA, payload: data });
+    } else {
+      // Force initialization if no data exists
+      dataStorage.init();
+      const newData = dataStorage.getData();
+      if (newData) {
+        dispatch({ type: ACTIONS.SET_USER_DATA, payload: newData });
+      }
     }
   }, []);
 

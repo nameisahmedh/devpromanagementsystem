@@ -62,7 +62,9 @@ const App = () => {
       }
     }
     
-    throw new Error('Invalid credentials')
+    // Log available users for debugging
+    console.log('Available staff:', userData?.map(u => ({ name: u.name, email: u.email })));
+    throw new Error('Invalid email or password. Please check your credentials.')
   }
 
   // Update logged in user data when userData changes

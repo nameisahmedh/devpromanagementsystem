@@ -7,7 +7,8 @@ class DataStorage {
 
   init() {
     // Initialize with default data if not exists
-    if (!this.getData()) {
+    const existingData = this.getData();
+    if (!existingData || !existingData.staff || existingData.staff.length === 0) {
       this.setData(this.getDefaultData());
     }
   }
@@ -328,6 +329,41 @@ class DataStorage {
               status: "completed",
               createdAt: "2025-01-16T10:00:00Z",
               updatedAt: "2025-01-19T10:00:00Z"
+            }
+          ]
+        }
+        {
+          id: 5,
+          name: "Emma",
+          email: "emma@mail.com",
+          password: "12345",
+          role: "devops",
+          avatar: null,
+          joinDate: "2024-02-15",
+          tasks: [
+            {
+              id: 5001,
+              taskTitle: "CI/CD Pipeline",
+              taskDescription: "Setup automated deployment pipeline with Docker and GitHub Actions.",
+              category: "devops",
+              priority: "high",
+              taskDate: "2025-01-16",
+              dueDate: "2025-01-23",
+              status: "in-progress",
+              createdAt: "2025-01-16T10:00:00Z",
+              updatedAt: "2025-01-16T10:00:00Z"
+            },
+            {
+              id: 5002,
+              taskTitle: "Server Monitoring",
+              taskDescription: "Implement comprehensive server monitoring and alerting system.",
+              category: "devops",
+              priority: "medium",
+              taskDate: "2025-01-18",
+              dueDate: "2025-01-26",
+              status: "new",
+              createdAt: "2025-01-18T10:00:00Z",
+              updatedAt: "2025-01-18T10:00:00Z"
             }
           ]
         }

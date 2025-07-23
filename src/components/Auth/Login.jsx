@@ -18,7 +18,7 @@ const Login = ({handleLogin}) => {
       setEmail("");
       setPassword("");
     } catch (error) {
-      toast.error(error.message || "Login failed");
+      toast.error(error.message || "Invalid email or password");
     } finally {
       setIsLoading(false);
     }
