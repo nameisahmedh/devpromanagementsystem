@@ -1,30 +1,47 @@
 @import "tailwindcss";
 
+/* CSS Variables for theming */
+:root {
+  --toast-bg: #1e293b;
+  --toast-color: #ffffff;
+  --toast-border: #475569;
+}
+
+.light {
+  --toast-bg: #ffffff;
+  --toast-color: #1e293b;
+  --toast-border: #e2e8f0;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a2e;
+  background: var(--scrollbar-track, #1e293b);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #6246ea;
+  background: var(--scrollbar-thumb, #6366f1);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3e54ac;
+  background: var(--scrollbar-thumb-hover, #4f46e5);
 }
 
 /* Light mode scrollbar */
 .light ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  --scrollbar-track: #f1f5f9;
 }
 
 .light ::-webkit-scrollbar-thumb {
-  background: #6246ea;
+  --scrollbar-thumb: #6366f1;
+}
+
+.light ::-webkit-scrollbar-thumb:hover {
+  --scrollbar-thumb-hover: #4f46e5;
 }
 
 /* Line clamp utility */
@@ -43,10 +60,16 @@
 /* Theme classes */
 .dark {
   color-scheme: dark;
+  --scrollbar-track: #1e293b;
+  --scrollbar-thumb: #6366f1;
+  --scrollbar-thumb-hover: #4f46e5;
 }
 
 .light {
   color-scheme: light;
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-thumb: #6366f1;
+  --scrollbar-thumb-hover: #4f46e5;
 }
 
 /* Ensure proper spacing for sidebar */
@@ -55,15 +78,24 @@ body {
   padding: 0;
 }
 
-/* Fix for mobile menu overlay */
-@media (max-width: 1023px) {
-  .sidebar-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 40;
+/* Smooth theme transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Focus styles */
+.focus-visible:focus {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+/* Loading animation */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }

@@ -3,17 +3,18 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   LayoutDashboard, 
-  BarChart3, 
-  User, 
+  User,
   LogOut, 
   Menu,
   Code,
   X,
-  Settings,
-  Users
+  Sun,
+  Moon
 } from 'lucide-react'
+import { useAuth } from '../../hooks/useAuth'
 
-const Sidebar = ({ userRole, onLogout }) => {
+const Sidebar = () => {
+  const { user, profile, signOut, theme, toggleTheme, isAdmin } = useAuth()
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const location = useLocation()
 
@@ -32,28 +33,34 @@ const Sidebar = ({ userRole, onLogout }) => {
     setIsMobileOpen(false)
   }, [location.pathname])
 
-  const adminMenuItems = [
-    { path: '/admin/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
-    { path: '/admin/users', icon: Users, label: 'Manage Users' },
-    { path: '/admin/settings', icon: Settings, label: 'Settings' }
+  const menuItems = [
+    { path: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { path: '/profile', icon: User, label: 'Profile' }
   ]
-
-  const staffMenuItems = [
-    { path: '/staff/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { path: '/staff/profile', icon: User, label: 'Profile' }
-  ]
-
-  const menuItems = userRole === 'admin' ? adminMenuItems : staffMenuItems
 
   const toggleMobile = () => setIsMobileOpen(!isMobileOpen)
+
+  const handleLogout = async () => {
+    await signOut()
+    setIsMobileOpen(false)
+  }
+
+  const cardClass = theme === 'dark' 
+    ? 'bg-slate-800 border-slate-700' 
+    : 'bg-white border-gray-200 shadow-lg'
+  const textClass = theme === 'dark' ? 'text-white' : 'text-gray-900'
+  const subtextClass = theme === 'dark' ? 'text-gray-300' : 'text-gray-600'
 
   return (
     <>
       {/* Mobile Menu Button - Only show on small screens */}
       <motion.button
         onClick={toggleMobile}
-        className="lg:hidden fixed top-4 left-4 z-50 bg-[#232946] text-white p-3 rounded-xl shadow-lg border border-[#3a3a4e] hover:bg-[#6246ea] transition-colors"
+        className={`lg:hidden fixed top-4 left-4 z-50 p-3 rounded-xl shadow-lg border transition-colors ${
+          theme === 'dark' 
+            ? 'bg-slate-800 text-white border-slate-700 hover:bg-indigo-600' 
+            : 'bg-white text-gray-900 border-gray-200 hover:bg-indigo-600 hover:text-white'
+        }`}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
       >
@@ -99,7 +106,7 @@ const Sidebar = ({ userRole, onLogout }) => {
       {/* Sidebar - Always visible on desktop, toggle on mobile */}
       <motion.div
         className={`
-          bg-gradient-to-b from-[#232946] to-[#1a1a2e] h-screen fixed left-0 top-0 z-40 w-64 transition-all duration-300 border-r border-[#3a3a4e] shadow-2xl
+          ${cardClass} h-screen fixed left-0 top-0 z-40 w-64 transition-all duration-300 border-r shadow-2xl
           ${isMobileOpen ? 'translate-x-0' : 'lg:translate-x-0 -translate-x-full'}
           flex flex-col overflow-hidden
         `}
@@ -115,7 +122,7 @@ const Sidebar = ({ userRole, onLogout }) => {
           >
             <div className="flex items-center gap-3">
               <motion.div 
-                className="w-12 h-12 bg-gradient-to-r from-[#6246ea] to-[#3e54ac] rounded-xl flex items-center justify-center shadow-lg"
+                className="w-12 h-12 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg"
                 whileHover={{ scale: 1.1, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
@@ -126,8 +133,8 @@ const Sidebar = ({ userRole, onLogout }) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <h2 className="text-white font-bold text-xl">DevPro</h2>
-                <p className="text-[#b8c1ec] text-xs">Solutions</p>
+                <h2 className={`font-bold text-xl ${textClass}`}>DevPro</h2>
+                <p className={`text-xs ${subtextClass}`}>Solutions</p>
               </motion.div>
             </div>
           </motion.div>
@@ -148,18 +155,21 @@ const Sidebar = ({ userRole, onLogout }) => {
                   <Link
                     to={item.path}
                     onClick={() => setIsMobileOpen(false)}
-                    className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 group relative overflow-hidden
+                    className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 group relative overflow-hidden ${
                       ${isActive
-                        ? 'bg-gradient-to-r from-[#6246ea] to-[#3e54ac] text-white shadow-lg transform scale-105'
-                        : 'text-[#b8c1ec] hover:bg-[#3a3a4e] hover:text-white hover:scale-105'
-                      }
-                    `}
+                        ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg transform scale-105'
+                        : theme === 'dark'
+                          ? 'text-gray-300 hover:bg-slate-700 hover:text-white hover:scale-105'
+                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 hover:scale-105'
+                      }}`}
                   >
                     <motion.div
                       whileHover={{ scale: 1.2, rotate: 5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
-                      <IconComponent className={`w-6 h-6 ${isActive ? 'text-white' : 'group-hover:text-[#6246ea]'} relative z-10`} />
+                      <IconComponent className={`w-6 h-6 ${
+                        isActive ? 'text-white' : theme === 'dark' ? 'group-hover:text-indigo-400' : 'group-hover:text-indigo-600'
+                      } relative z-10`} />
                     </motion.div>
                     <motion.span 
                       className="font-medium relative z-10"
@@ -171,7 +181,7 @@ const Sidebar = ({ userRole, onLogout }) => {
                     </motion.span>
                     {isActive && (
                       <motion.div
-                        className="absolute inset-0 bg-gradient-to-r from-[#6246ea]/20 to-[#3e54ac]/20 rounded-xl"
+                        className="absolute inset-0 bg-gradient-to-r from-indigo-600/20 to-purple-600/20 rounded-xl"
                         layoutId="activeTab"
                         transition={{ type: "spring", stiffness: 300, damping: 30 }}
                       />
@@ -182,27 +192,66 @@ const Sidebar = ({ userRole, onLogout }) => {
             })}
           </nav>
 
+          {/* Theme Toggle */}
+          <motion.button
+            onClick={toggleTheme}
+            className={`flex items-center gap-4 p-3 w-full rounded-xl transition-all duration-200 group mb-4 ${
+              theme === 'dark'
+                ? 'text-gray-300 hover:bg-slate-700 hover:text-white'
+                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+            }`}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <motion.div
+              whileHover={{ scale: 1.2, rotate: theme === 'dark' ? 180 : -180 }}
+              transition={{ type: "spring", stiffness: 300 }}
+            >
+              {theme === 'dark' ? (
+                <Sun className="w-6 h-6 group-hover:text-yellow-400 relative z-10" />
+              ) : (
+                <Moon className="w-6 h-6 group-hover:text-indigo-600 relative z-10" />
+              )}
+            </motion.div>
+            <motion.span 
+              className="font-medium relative z-10"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.2 }}
+            >
+              {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+            </motion.span>
+          </motion.button>
+
           {/* User Role Badge */}
           <motion.div 
-            className="mb-4 p-4 bg-gradient-to-r from-[#3a3a4e] to-[#2a2a3e] rounded-xl border border-[#4a4a5e]"
+            className={`mb-4 p-4 rounded-xl border ${
+              theme === 'dark' 
+                ? 'bg-gradient-to-r from-slate-700 to-slate-600 border-slate-600' 
+                : 'bg-gradient-to-r from-gray-100 to-gray-50 border-gray-200'
+            }`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
-            <div className="text-xs text-[#b8c1ec] mb-1">Logged in as</div>
-            <div className="text-white font-semibold capitalize flex items-center gap-2">
+            <div className={`text-xs mb-1 ${subtextClass}`}>Logged in as</div>
+            <div className={`font-semibold capitalize flex items-center gap-2 ${textClass}`}>
               <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              {userRole}
+              {profile?.full_name || 'User'}
+            </div>
+            <div className={`text-xs mt-1 ${subtextClass}`}>
+              {isAdmin ? 'Administrator' : 'Staff Member'}
             </div>
           </motion.div>
 
           {/* Logout Button */}
           <motion.button
-            onClick={() => {
-              onLogout();
-              setIsMobileOpen(false);
-            }}
-            className="flex items-center gap-4 p-3 w-full text-[#b8c1ec] hover:bg-red-600/20 hover:text-red-400 rounded-xl transition-all duration-200 group relative overflow-hidden"
+            onClick={handleLogout}
+            className={`flex items-center gap-4 p-3 w-full rounded-xl transition-all duration-200 group relative overflow-hidden ${
+              theme === 'dark'
+                ? 'text-gray-300 hover:bg-red-600/20 hover:text-red-400'
+                : 'text-gray-600 hover:bg-red-50 hover:text-red-600'
+            }`}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
           >
@@ -210,7 +259,9 @@ const Sidebar = ({ userRole, onLogout }) => {
               whileHover={{ scale: 1.2, rotate: -5 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <LogOut className="w-6 h-6 group-hover:text-red-400 relative z-10" />
+              <LogOut className={`w-6 h-6 relative z-10 ${
+                theme === 'dark' ? 'group-hover:text-red-400' : 'group-hover:text-red-600'
+              }`} />
             </motion.div>
             <motion.span 
               className="font-medium relative z-10"
