@@ -156,7 +156,7 @@ const Sidebar = () => {
                     to={item.path}
                     onClick={() => setIsMobileOpen(false)}
                     className={`flex items-center gap-4 p-3 rounded-xl transition-all duration-200 group relative overflow-hidden ${
-                      ${isActive
+                      isActive
                         ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg transform scale-105'
                         : theme === 'dark'
                           ? 'text-gray-300 hover:bg-slate-700 hover:text-white hover:scale-105'
