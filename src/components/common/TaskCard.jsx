@@ -1,13 +1,11 @@
 import React from 'react';
-import { Clock, Calendar, AlertTriangle, CheckCircle, XCircle, Play, User } from 'lucide-react';
+import { Clock, Calendar, AlertTriangle, CheckCircle, XCircle, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const TaskCard = ({ 
   task, 
   onStatusChange, 
   showActions = true, 
-  showAssignee = false,
-  assigneeName = '',
   onDelete = null,
   darkMode = true 
 }) => {
@@ -132,14 +130,6 @@ const TaskCard = ({
       <p className={`text-sm mb-4 line-clamp-3 ${descriptionClass}`}>
         {task.taskDescription}
       </p>
-
-      {/* Assignee */}
-      {showAssignee && assigneeName && (
-        <div className="flex items-center gap-2 mb-3">
-          <User className={`w-4 h-4 ${dateClass}`} />
-          <span className={`text-sm ${dateClass}`}>Assigned to: {assigneeName}</span>
-        </div>
-      )}
 
       {/* Dates */}
       <div className={`flex items-center justify-between text-xs mb-4 ${dateClass}`}>

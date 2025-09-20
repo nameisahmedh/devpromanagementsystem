@@ -7,7 +7,6 @@ const SearchAndFilter = ({
   onSearchChange, 
   filter, 
   onFilterChange, 
-  showFilters = true,
   darkMode = true 
 }) => {
   const filters = [
@@ -64,26 +63,24 @@ const SearchAndFilter = ({
         </div>
 
         {/* Filter Buttons */}
-        {showFilters && (
-          <div className="flex items-center gap-2 flex-wrap">
-            <Filter className={`${iconClass} w-4 h-4`} />
-            {filters.map((filterOption) => (
-              <button
-                key={filterOption.value}
-                onClick={() => onFilterChange(filterOption.value)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                  filter === filterOption.value
-                    ? `${filterOption.color} text-white shadow-lg`
-                    : darkMode
-                      ? 'bg-[#1a1a2e] text-[#b8c1ec] hover:bg-[#3a3a4e] hover:text-white'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
-                }`}
-              >
-                {filterOption.label}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="flex items-center gap-2 flex-wrap">
+          <Filter className={`${iconClass} w-4 h-4`} />
+          {filters.map((filterOption) => (
+            <button
+              key={filterOption.value}
+              onClick={() => onFilterChange(filterOption.value)}
+              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                filter === filterOption.value
+                  ? `${filterOption.color} text-white shadow-lg`
+                  : darkMode
+                    ? 'bg-[#1a1a2e] text-[#b8c1ec] hover:bg-[#3a3a4e] hover:text-white'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+              }`}
+            >
+              {filterOption.label}
+            </button>
+          ))}
+        </div>
       </div>
     </motion.div>
   );

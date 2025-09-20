@@ -12,11 +12,9 @@ import AdminDashboard from './components/dashboard/AdminDashboard'
 import Profile from './components/Profile/Profile'
 import NotFound from './components/NotFound/NotFound'
 import LoadingScreen from './components/Loading/LoadingScreen'
-import './App.css'
 
 const AppRoutes = () => {
   const { loading, isAuthenticated, isAdmin } = useAuth()
-  const location = useLocation()
   
   if (loading) {
     return <LoadingScreen />
@@ -88,9 +86,9 @@ const App = () => {
             toastOptions={{
               duration: 4000,
               style: {
-                background: 'var(--toast-bg)',
-                color: 'var(--toast-color)',
-                border: '1px solid var(--toast-border)'
+                background: '#1e293b',
+                color: '#ffffff',
+                border: '1px solid #475569'
               }
             }}
           />

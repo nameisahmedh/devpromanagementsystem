@@ -310,8 +310,6 @@ const AdminDashboard = () => {
                           onStatusChange={handleStatusChange}
                           onDelete={handleDeleteTask}
                           showActions={true}
-                          showAssignee={true}
-                          assigneeName={task.assigned_to_profile?.full_name || 'Unassigned'}
                           darkMode={theme === 'dark'}
                         />
                       </motion.div>

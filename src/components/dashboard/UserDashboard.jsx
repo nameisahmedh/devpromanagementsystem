@@ -4,13 +4,17 @@ import { useAuth } from '../../hooks/useAuth'
 import { dbHelpers } from '../../lib/supabase'
 import DashboardLayout from './DashboardLayout'
 import TaskCard from '../common/TaskCard'
+import SearchAndFilter from '../common/SearchAndFilter'
 import { CheckCircle, Clock, AlertTriangle, Plus } from 'lucide-react'
 import toast from 'react-hot-toast'
 
 const UserDashboard = () => {
   const { user, profile, theme } = useAuth()
   const [tasks, setTasks] = useState([])
+  const [filteredTasks, setFilteredTasks] = useState([])
   const [loading, setLoading] = useState(true)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filter, setFilter] = useState('all')
   const [stats, setStats] = useState({
     total: 0,
     new: 0,
@@ -24,6 +28,10 @@ const UserDashboard = () => {
       loadUserTasks()
     }
   }, [user])
+
+  useEffect(() => {
+    filterTasks()
+  }, [tasks, searchTerm, filter])
 
   const loadUserTasks = async () => {
     try {
@@ -48,6 +56,26 @@ const UserDashboard = () => {
     } finally {
       setLoading(false)
     }
+  }
+
+  const filterTasks = () => {
+    let filtered = tasks
+    
+    // Apply status filter
+    if (filter !== 'all') {
+      filtered = filtered.filter(task => task.status === filter)
+    }
+    
+    // Apply search filter
+    if (searchTerm) {
+      filtered = filtered.filter(task =>
+        task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        task.category.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    }
+    
+    setFilteredTasks(filtered)
   }
 
   const handleStatusChange = async (taskId, newStatus) => {
@@ -160,10 +188,19 @@ const UserDashboard = () => {
           })}
         </div>
 
+        {/* Search and Filter */}
+        <SearchAndFilter
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          filter={filter}
+          onFilterChange={setFilter}
+          darkMode={theme === 'dark'}
+        />
+
         {/* Tasks Section */}
         <div className="mb-8">
           <h2 className={`text-2xl font-bold mb-6 ${titleClass}`}>
-            Your Tasks ({tasks.length})
+            Your Tasks ({filteredTasks.length})
           </h2>
           
           {loading ? (
@@ -174,15 +211,22 @@ const UserDashboard = () => {
                 </div>
               ))}
             </div>
-          ) : tasks.length === 0 ? (
+          ) : filteredTasks.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📋</div>
-              <h3 className={`text-xl font-semibold mb-2 ${titleClass}`}>No tasks assigned yet</h3>
-              <p className={subtitleClass}>Your tasks will appear here once they're assigned by your admin.</p>
+              <h3 className={`text-xl font-semibold mb-2 ${titleClass}`}>
+                {tasks.length === 0 ? 'No tasks assigned yet' : 'No tasks match your search'}
+              </h3>
+              <p className={subtitleClass}>
+                {tasks.length === 0 
+                  ? 'Your tasks will appear here once they\'re assigned by your admin.'
+                  : 'Try adjusting your search or filter criteria.'
+                }
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {tasks.map((task, idx) => (
+              {filteredTasks.map((task, idx) => (
                 <motion.div
                   key={task.id}
                   initial={{ opacity: 0, y: 20 }}
